@@ -28,9 +28,9 @@ public class racstervezo extends javax.swing.JInternalFrame {
     static ResultSet rs;
     racstervezoadatok racs = new racstervezoadatok();
 
-    public racstervezo() {        
+    public racstervezo() {
         initComponents();
-        racs.nev="";
+        racs.nev = "";
         racselemek_kijelzo_torles();
         mentes.setEnabled(false);
         // A mintaelem beolvasása
@@ -1494,7 +1494,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
             // kirajzoltatás    
             racskozok_torlo();
             racselemek_kijelzo_torles();
-            rudnevek_kijelzo_torles();
+            rudnevek_kijelzo();
             szekcio_keptorlo();
             teljes_kepkitevo();
             szekciohossz.setText("");
@@ -1526,7 +1526,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         ftipus8.setEnabled(false);
     }
 
-    private void rudnevek_kijelzo_torles() {
+    private void rudnevek_kijelzo() {
         //racsrudnev1.setEnabled(false);
         racsrudnev2.setEnabled(false);
         racsrudnev3.setEnabled(false);
@@ -1535,6 +1535,27 @@ public class racstervezo extends javax.swing.JInternalFrame {
         racsrudnev6.setEnabled(false);
         racsrudnev7.setEnabled(false);
         racsrudnev8.setEnabled(false);
+        if (racs.adatok1[szekciok.getSelectedIndex()][13] > 0) {
+            racsrudnev2.setEnabled(true);
+        }
+        if (racs.adatok1[szekciok.getSelectedIndex()][14] > 0) {
+            racsrudnev3.setEnabled(true);
+        }
+        if (racs.adatok1[szekciok.getSelectedIndex()][15] > 0) {
+            racsrudnev4.setEnabled(true);
+        }
+        if (racs.adatok1[szekciok.getSelectedIndex()][16] > 0) {
+            racsrudnev5.setEnabled(true);
+        }
+        if (racs.adatok1[szekciok.getSelectedIndex()][17] > 0) {
+            racsrudnev6.setEnabled(true);
+        }
+        if (racs.adatok1[szekciok.getSelectedIndex()][18] > 0) {
+            racsrudnev7.setEnabled(true);
+        }
+        if (racs.adatok1[szekciok.getSelectedIndex()][19] > 0) {
+            racsrudnev8.setEnabled(true);
+        }
     }
 
     private void racselemek_kijelzo() {
