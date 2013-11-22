@@ -398,6 +398,9 @@ public class racstervezoadatok {
     }
 
     public void kozbeolvaso(int szekcio, int koz) {
+        for (int i = 1; i <= 8; i++) {
+            racselemek[i] =0;
+        }
         for (int i = 1; i <= kozszam; i++) {
             if ((adatok1[i][0] == szekcio) && ((adatok1[i][11] == koz))) {
                 racselemek[1] = adatok1[i][12];
