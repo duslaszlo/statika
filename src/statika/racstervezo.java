@@ -198,7 +198,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
         eltolasyz = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        mirror = new javax.swing.JRadioButton();
         konzolhossz = new javax.swing.JTextField();
         jSeparator7 = new javax.swing.JSeparator();
         jLabel32 = new javax.swing.JLabel();
@@ -319,17 +318,17 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
         szekcioadatok.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null,  new Boolean(true), null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null,  new Boolean(true), null}
             },
             new String [] {
-                "Sorszám", "Magasság", "AlsóXY", "AlsóYZ", "FelsőXY", "FelsőYZ", "DiffX", "DiffY", "DiffZ", "Eltolásx", "EltolásY", "Konzol", "Függ.", "Tükrözés", "Keresni", "Törölni"
+                "Sorszám", "Magasság", "AlsóXY", "AlsóYZ", "FelsőXY", "FelsőYZ", "DiffX", "DiffY", "DiffZ", "Eltolásx", "EltolásY", "Konzol", "Függ.", "Törölni"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true
+                false, true, true, true, true, true, true, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -444,8 +443,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
         jLabel14.setText("Konzol:");
 
-        mirror.setText("Tükrözni");
-
         konzolhossz.setText("0");
 
         jLabel32.setText("Csomópontszám:");
@@ -463,6 +460,10 @@ public class racstervezo extends javax.swing.JInternalFrame {
         jLabel45.setText("Összsúly:");
 
         jLabel46.setText("Szekciósúly:");
+
+        teljes_suly.setEditable(false);
+
+        szekcio_suly.setEditable(false);
 
         jLabel47.setText("Kg");
 
@@ -517,7 +518,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(elemhozzado, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(mirror)
                                 .addComponent(irany, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(keresni, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(48, 48, 48))
@@ -550,8 +550,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(Magassag, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(mirror))
+                    .addComponent(Magassag, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(elemszamok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1441,7 +1440,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 }
             }
             for (int i = 1; i <= racs.szekcioszam; i++) {
-                String[] data = new String[14];
+                String[] data = new String[13];
                 for (int k = 0; k < 12; k++) {
                     data[k] = String.valueOf(racs.adatok[i][k]);
                 }
@@ -1450,16 +1449,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
                     tableModel.setValueAt(true, i - 1, 12);
                 } else {
                     tableModel.setValueAt(false, i - 1, 12);
-                }
-                if (racs.adatok[i][13] == 1) {
-                    tableModel.setValueAt(true, i - 1, 13);
-                } else {
-                    tableModel.setValueAt(false, i - 1, 13);
-                }
-                if (racs.adatok[i][14] == 1) {
-                    tableModel.setValueAt(true, i - 1, 14);
-                } else {
-                    tableModel.setValueAt(false, i - 1, 14);
                 }
             }
             // A 2-4 -es oszlopok középre igazítása
@@ -1485,8 +1474,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
             // A logikai kapcsolók
             szekcioadatok.getColumnModel().getColumn(12).setPreferredWidth(70);
             szekcioadatok.getColumnModel().getColumn(13).setPreferredWidth(70);
-            szekcioadatok.getColumnModel().getColumn(14).setPreferredWidth(70);
-            szekcioadatok.getColumnModel().getColumn(15).setPreferredWidth(70);
             szekcioadatok.setModel(tableModel);
             szekcioadatok.setShowGrid(true);
             racs.racselemek();
@@ -1677,14 +1664,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
             if (irany.isSelected()) {
                 racs.adatok[racs.szekcioszam][12] = 2;
             }
-            racs.adatok[racs.szekcioszam][13] = 0;
-            if (mirror.isSelected()) {
-                racs.adatok[racs.szekcioszam][13] = 1;
-            }
-            racs.adatok[racs.szekcioszam][14] = 0;
-            if (keresni.isSelected()) {
-                racs.adatok[racs.szekcioszam][14] = 1;
-            }
             // A Jtable-be való beleírás
             int j = tableModel.getRowCount();
             if (j > 0) {
@@ -1714,7 +1693,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                     tableModel.setValueAt(false, i - 1, 14);
                 }
             }
-            // A 2-4 -es oszlopok középre igazítása
+            // Az összes oszlop középre igazítása
             DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
             centerRenderer.setHorizontalAlignment(ujelemnev.CENTER);
             for (int k = 0; k < 12; k++) {
@@ -1737,8 +1716,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
             // A logikai kapcsolók
             szekcioadatok.getColumnModel().getColumn(12).setPreferredWidth(70);
             szekcioadatok.getColumnModel().getColumn(13).setPreferredWidth(70);
-            szekcioadatok.getColumnModel().getColumn(14).setPreferredWidth(70);
-            szekcioadatok.getColumnModel().getColumn(15).setPreferredWidth(70);
             szekcioadatok.setModel(tableModel);
             szekcioadatok.setShowGrid(true);
 
@@ -1785,7 +1762,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
                         adat += ((Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
                         adat = Integer.parseInt(kapcsz.getText()) + (i - 1) * adat;
                         racs.adatok1[racs.kozszam][8] = Integer.parseInt(String.valueOf(adat));
-
                     } else {
                         // A vízszintes szakaszok
                         // x 
@@ -2166,7 +2142,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private void kozkivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kozkivalasztoActionPerformed
         racs.kozbeolvaso(szekciok.getSelectedIndex(), kozok.getSelectedIndex() + 1);
         szekcio_kepkitevo();
-        racselemek_kijelzo();
+        //racselemek_kijelzo();
     }//GEN-LAST:event_kozkivalasztoActionPerformed
 
     private void Szelveny_hozzarendeloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Szelveny_hozzarendeloActionPerformed
@@ -2374,6 +2350,9 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private void mentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mentesActionPerformed
         // TODO add your handling code here:
         racs.adatrogzito();
+        for (int i = 1; i <= racs.rudindex; i++) {
+            racs.rud[i][7] = (int)(racs.rudhossz(racs.rud[i][1],racs.rud[i][2]));
+        }
         mentes.setEnabled(false);
         csomopontszam.setText(String.valueOf(racs.csomopontindex));
         rudszam.setText(String.valueOf(racs.rudindex));
@@ -2482,7 +2461,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox kozok;
     private javax.swing.JTextField megjegyzes;
     private javax.swing.JButton mentes;
-    private javax.swing.JRadioButton mirror;
     private javax.swing.JButton racskoz_valtoztato;
     private javax.swing.JTable racskozok;
     private javax.swing.JComboBox racsrudnev1;
