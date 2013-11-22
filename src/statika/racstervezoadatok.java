@@ -30,8 +30,8 @@ public class racstervezoadatok {
     int kozszam;                                          // A drótvázon belüli közök száma
     int csomopontszam = 2000;                             // A csomópontok maximális száma
     int rudszam = 2000;                                   // A rudak maximális száma
-    int[][] adatok = new int[maxelem][15];                // szekcio(0),magassag(1),alsoxy(2),alsoyz(3),felsoxy(4),felsoyz(5),diffx(6),
-    // diffy(7),diffz(8),eltolasxy(9),eltolasyz(10),konzol(11),fugg/vízsz(12),tükrözés(13),keresni(14) (-->> racsalap tábla)
+    int[][] adatok = new int[maxelem][13];                // szekcio(0),magassag(1),alsoxy(2),alsoyz(3),felsoxy(4),felsoyz(5),diffx(6),
+    // diffy(7),diffz(8),eltolasxy(9),eltolasyz(10),konzol(11),fugg/vízsz(12) (-->> racsalap tábla)
     int[][] adatok1 = new int[maxelem1][20];              // szekcio(0),magassag(1),alsoxy(2),alsoyz(3),felsoxy(4),felsoyz(5),diffx(6),
     // diffy(7),diffz(8),eltolasxy(9),eltolasyz(10),koz(11),a rácselemek kódjai (12-19) (-->> racsalap1 tábla)
     int mintaindexf, mintarudindex, mintaindexv;
@@ -42,7 +42,7 @@ public class racstervezoadatok {
     int[][] mintarud = new int[700][5];                   // Az alap-rúdmintázat irány(0), tipus(1)/1->8/,verzio(2),kezdőcsp(3),végecsp(4);
     float[][] tempcsp = new float[200][3];                // Az átmeneti drótváz-elem koordinátái x(0),y(1),z(2)
     float[][] csomopont = new float[csomopontszam][4];    // A drótváz koordinátái szekcio(0),x(1),y(2),z(3)
-    int[][] rud = new int[rudszam][7];                    // A drótváz rúdjainak (szekciószám(0)) kezdő(1) és végcsomópontjai(2),vastagság(3), a kijelzés megjelölése(0/1/2)(4),koz(5),tipus(6)
+    int[][] rud = new int[rudszam][8];                    // A drótváz rúdjainak (szekciószám(0)) kezdő(1) és végcsomópontjai(2),vastagság(3), a kijelzés megjelölése(0/1/2)(4),koz(5),tipus(6),hossz(7)
     String[][] rudnevek = new String[maxelem][9];         // A szekciokijelzesnel az aktuális rudszelvények nevei 
     int csomopontindex, rudindex;                         // A beolvasott drórváz csompontjainak max. értéke & az éppen kiválasztott szekció sorszáma
     float[][][] limitek = new float[2][3][2];             // A drótváz maximum és minimum értékei  [szekció(1)/teljes(0)], [x(0),y(1),z(2)], 
@@ -104,8 +104,6 @@ public class racstervezoadatok {
                 adatok[szekcioszam][10] = rs.getInt("eltolasyz");
                 adatok[szekcioszam][11] = rs.getInt("teljes");
                 adatok[szekcioszam][12] = rs.getInt("irany");
-                adatok[szekcioszam][13] = rs.getInt("tukrozes");
-                adatok[szekcioszam][14] = rs.getInt("keresni");
                 rudnevek[szekcioszam][1] = rs.getString("nev1");
                 rudnevek[szekcioszam][2] = rs.getString("nev2");
                 rudnevek[szekcioszam][3] = rs.getString("nev3");
@@ -164,7 +162,7 @@ public class racstervezoadatok {
         kepnagyitas[1] = 1;
     }
 
-    public void adatrogzito() {
+    public void adatrogzito() {        
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
@@ -176,16 +174,12 @@ public class racstervezoadatok {
             st.execute(parancs);
             // A szekció elemének lerögzítése
             for (int i = 1; i <= szekcioszam; i++) {
-                parancs = "INSERT INTO racsalap (nev,szekcio,magassag,alsoszelxy,alsoszelyz,felsoszelxy,felsoszelyz,x,y,z,eltolasxy,eltolasyz,teljes,irany,tukrozes,keresni) VALUES ( '";
+                parancs = "INSERT INTO racsalap (nev,szekcio,magassag,alsoszelxy,alsoszelyz,felsoszelxy,felsoszelyz,x,y,z,eltolasxy,eltolasyz,teljes,irany) VALUES ( '";
                 parancs = parancs + nev + "','";
-                // Az első szekció az a vízszintes szekcióknál a tükrözés alapja
-                if (adatok[i][0] == 1) {
-                    adatok[i][13] = 2;
-                }
-                for (int k = 0; k <= 13; k++) {
+                for (int k = 0; k <= 11; k++) {
                     parancs = parancs + adatok[i][k] + "','";
                 }
-                parancs = parancs + adatok[i][14];
+                parancs = parancs + adatok[i][12];
                 parancs = parancs + "');";
                 //System.out.println(parancs);
                 st.execute(parancs);
@@ -594,9 +588,9 @@ public class racstervezoadatok {
                 tempcsp[15][1] = tempcsp[1][1];
                 //z
                 tempcsp[14][2] = tempcsp[5][2]
-                        + ( (adatok[i][11] - adatok[i][1])/(tempcsp[5][0] - tempcsp[1][0])) * ((tempcsp[5][2] - tempcsp[1][2]));
+                        + ((adatok[i][11] - adatok[i][1]) / (tempcsp[5][0] - tempcsp[1][0])) * ((tempcsp[5][2] - tempcsp[1][2]));
                 tempcsp[15][2] = tempcsp[6][2]
-                        + (  (adatok[i][11] - adatok[i][1])/(tempcsp[6][0] - tempcsp[2][0])) * ((tempcsp[6][2] - tempcsp[2][2]));
+                        + ((adatok[i][11] - adatok[i][1]) / (tempcsp[6][0] - tempcsp[2][0])) * ((tempcsp[6][2] - tempcsp[2][2]));
                 csomopont_beiro(i, 14, 15);
                 rud_beiro(i, 14, 15, koz + 1, 0);
                 rud_beiro(i, 5, 14, koz + 1, 0);
@@ -889,19 +883,21 @@ public class racstervezoadatok {
         }
     }
 
+    public float rudhossz(int kezdocsp, int vegecsp) {
+        return Math.abs(csomopont[kezdocsp][1] - csomopont[vegecsp][1])
+                + Math.abs(csomopont[kezdocsp][2] - csomopont[vegecsp][2])
+                + Math.abs(csomopont[kezdocsp][3] - csomopont[vegecsp][3]);
+    }
+
     public void csomopont_kereso(int pontsorszam) {
         // X,y,z koordinátákat keres, és az adat-ban lesz a legközelebbi csomópont
         float tavolsag = Float.MAX_VALUE;
         adat = 1;
         for (int k = 1; k < csomopontindex; k++) {
             if (k != pontsorszam) {
-                if ((Math.abs(x - csomopont[k][1])
-                        + Math.abs(y - csomopont[k][2])
-                        + Math.abs(z - csomopont[k][3])) < tavolsag) {
-                    adat = k;
-                    tavolsag = Math.abs(x - csomopont[k][1])
-                            + Math.abs(y - csomopont[k][2])
-                            + Math.abs(z - csomopont[k][3]);
+                if (rudhossz(pontsorszam,k) < tavolsag) {
+                    adat = k;                    
+                    tavolsag = rudhossz(pontsorszam,k); 
                 }
             }
         }
