@@ -2375,10 +2375,14 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private void mentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mentesActionPerformed
         // TODO add your handling code here:        
         for (int i = 1; i <= racs.rudindex; i++) {
-            racs.rud[i][7] = (int) (racs.rudhossz(racs.rud[i][1], racs.rud[i][2]));            
-            racs.adatok1[racs.rud[i][0]][racs.rud[i][6] + 19] += racs.rud[i][7];
-            System.out.println("Kezd:"+racs.rud[i][1]+" vég:"+racs.rud[i][2]+
-                    "  hossz:"+racs.rud[i][7]+" Szekcio:"+racs.rud[i][0]+" tipus:"+racs.rud[i][6]);
+            racs.rud[i][7] = (int) (racs.rudhossz(racs.rud[i][1], racs.rud[i][2])); 
+            
+            for (int j = 1; j <= racs.kozszam; j++) {
+                if ((racs.adatok1[j][0]==racs.rud[i][0]) && (racs.adatok1[j][11]==racs.rud[i][5])) {
+                    racs.adatok1[j][racs.rud[i][6] + 19] += racs.rud[i][7];
+                }
+            }                        
+            System.out.println("Kezd:"+racs.rud[i][1]+" vég:"+racs.rud[i][2]+"  hossz:"+racs.rud[i][7]+" Szekcio:"+racs.rud[i][0]+" tipus:"+racs.rud[i][6]+" koz:"+racs.rud[i][5]);
         }
         racs.adatrogzito();
         mentes.setEnabled(false);
