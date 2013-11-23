@@ -32,8 +32,8 @@ public class racstervezoadatok {
     int rudszam = 2000;                                   // A rudak maximális száma
     int[][] adatok = new int[maxelem][13];                // szekcio(0),magassag(1),alsoxy(2),alsoyz(3),felsoxy(4),felsoyz(5),diffx(6),
     // diffy(7),diffz(8),eltolasxy(9),eltolasyz(10),konzol(11),fugg/vízsz(12) (-->> racsalap tábla)
-    int[][] adatok1 = new int[maxelem1][20];              // szekcio(0),magassag(1),alsoxy(2),alsoyz(3),felsoxy(4),felsoyz(5),diffx(6),
-    // diffy(7),diffz(8),eltolasxy(9),eltolasyz(10),koz(11),a rácselemek kódjai (12-19) (-->> racsalap1 tábla)
+    int[][] adatok1 = new int[maxelem1][28];              // szekcio(0),magassag(1),alsoxy(2),alsoyz(3),felsoxy(4),felsoyz(5),diffx(6),
+    // diffy(7),diffz(8),eltolasxy(9),eltolasyz(10),koz(11),a rácselemek kódjai (12-19),(20-27) a közök hossza mm-ben (-->> racsalap1 tábla)
     int mintaindexf, mintarudindex, mintaindexv;
     int[] racselemek = new int[9];                        // A rácselemtervezésnél a kiválasztott szekció első közének elemei
     float[][] mintacspf = new float[200][3];              // A függőleges mintacsomopont alapkoordinátái: x(0),y(1),z(2)
@@ -192,15 +192,18 @@ public class racstervezoadatok {
             // A közök elemeinek lerögzítése
             for (int i = 1; i <= kozszam; i++) {
                 parancs = "INSERT INTO racsalap1 (nev,szekcio,magassag,alsoszelxy,alsoszelyz,felsoszelxy,felsoszelyz,x,y,z,eltolasxy,eltolasyz,koz,";
-                parancs = parancs + "racs1,racs2,racs3,racs4,racs5,racs6,racs7,racs8,nev1,nev2,nev3,nev4,nev5,nev6,nev7,nev8) VALUES ( '";
+                parancs = parancs + "racs1,racs2,racs3,racs4,racs5,racs6,racs7,racs8,nev1,nev2,nev3,nev4,nev5,nev6,nev7,nev8,hossz1,hossz2,hossz3,hossz4,hossz5,hossz6,hossz7,hossz8) VALUES ( '";
                 parancs = parancs + nev + "','";
                 for (int k = 0; k <= 19; k++) {
                     parancs = parancs + adatok1[i][k] + "','";
                 }
-                for (int k = 1; k < 8; k++) {
+                for (int k = 1; k <= 8; k++) {
                     parancs = parancs + rudnevek[adatok1[i][0]][k] + "','";
                 }
-                parancs = parancs + rudnevek[adatok1[i][0]][8] + "');";
+                for (int k = 20; k < 27; k++) {
+                    parancs = parancs + adatok1[i][k] + "','";
+                }
+                parancs = parancs + adatok1[i][27] + "');";
                 //System.out.println(parancs);
                 st.execute(parancs);
             }
@@ -595,11 +598,11 @@ public class racstervezoadatok {
                 tempcsp[15][2] = tempcsp[6][2]
                         + ((adatok[i][11] - adatok[i][1]) / (tempcsp[6][0] - tempcsp[2][0])) * ((tempcsp[6][2] - tempcsp[2][2]));
                 csomopont_beiro(i, 14, 15);
-                rud_beiro(i, 14, 15, koz + 1, 0);
-                rud_beiro(i, 5, 14, koz + 1, 0);
-                rud_beiro(i, 6, 15, koz + 1, 0);
-                rud_beiro(i, 7, 14, koz + 1, 0);
-                rud_beiro(i, 8, 15, koz + 1, 0);
+                rud_beiro(i, 14, 15, koz + 1, 1);
+                rud_beiro(i, 5, 14, koz + 1, 1);
+                rud_beiro(i, 6, 15, koz + 1, 1);
+                rud_beiro(i, 7, 14, koz + 1, 1);
+                rud_beiro(i, 8, 15, koz + 1, 1);
             }
         }
     }

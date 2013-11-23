@@ -1515,7 +1515,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         ftipus8.setEnabled(false);
     }
 
-    private void rudnevek_kijelzo() {        
+    private void rudnevek_kijelzo() {
         int kijelzes;
         racsrudnev1.setEnabled(false);
         racsrudnev2.setEnabled(false);
@@ -2373,12 +2373,14 @@ public class racstervezo extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_vtipus6textActionPerformed
 
     private void mentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mentesActionPerformed
-        // TODO add your handling code here:
-        racs.adatrogzito();
+        // TODO add your handling code here:        
         for (int i = 1; i <= racs.rudindex; i++) {
-            racs.rud[i][7] = (int) (racs.rudhossz(racs.rud[i][1], racs.rud[i][2]));
-            //System.out.println(racs.rud[i][7]);
+            racs.rud[i][7] = (int) (racs.rudhossz(racs.rud[i][1], racs.rud[i][2]));            
+            racs.adatok1[racs.rud[i][0]][racs.rud[i][6] + 19] += racs.rud[i][7];
+            System.out.println("Kezd:"+racs.rud[i][1]+" vég:"+racs.rud[i][2]+
+                    "  hossz:"+racs.rud[i][7]+" Szekcio:"+racs.rud[i][0]+" tipus:"+racs.rud[i][6]);
         }
+        racs.adatrogzito();
         mentes.setEnabled(false);
         csomopontszam.setText(String.valueOf(racs.csomopontindex));
         rudszam.setText(String.valueOf(racs.rudindex));
