@@ -531,20 +531,21 @@ public class racstervezo extends javax.swing.JInternalFrame {
                             .addComponent(jLabel45))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(teljes_suly)
+                            .addComponent(csomopontszam, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(csomopontszam, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(26, 26, 26)
-                                .addComponent(jLabel44)
-                                .addGap(18, 18, 18)
-                                .addComponent(rudszam))
+                                .addGap(20, 20, 20)
+                                .addComponent(jLabel44))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(teljes_suly, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel47)
-                                .addGap(12, 12, 12)
-                                .addComponent(jLabel46)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(szekcio_suly, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel46)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(rudszam, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                            .addComponent(szekcio_suly))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel48)
                         .addGap(0, 0, Short.MAX_VALUE))))
@@ -1882,7 +1883,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
             }
         }
     }
-    
+
     private void szelvenysulyok_tablatolto() {
         DefaultTableModel tableModel = (DefaultTableModel) szelvenysulyok.getModel();
         szelvenysulyok_tablatorlo();
@@ -1912,11 +1913,22 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
     private void szekcio_kivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_szekcio_kivalasztoActionPerformed
         DefaultTableModel tableModel = (DefaultTableModel) racskozok.getModel();
+        float szekciosuly = 0, totalsuly = 0;
         String szoveg;
         /*for (int i = 1; i <= racs.rudindex; i++) {
          System.out.println("Rud:"+i+" Rud[4]:"+racs.rud[i][4]+"  Rud[5]:"+racs.rud[i][5]);
          }
          System.out.println();*/
+        for (int i = 1; i <= racs.szekcioszam; i++) {
+            for (int j = 1; j <= 8; j++) {
+                totalsuly += racs.rudsuly[i][j];
+                if (i == szekciok.getSelectedIndex()) {
+                    szekciosuly += racs.rudsuly[i][j];
+                }
+            }
+        }
+        teljes_suly.setText(String.valueOf(totalsuly));
+        szekcio_suly.setText(String.valueOf(szekciosuly));
         racs.kozbeolvaso(szekciok.getSelectedIndex(), 1);
         szelvenysulyok_tablatolto();
         /*System.out.println("1:");

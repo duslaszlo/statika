@@ -45,7 +45,7 @@ public class racstervezoadatok {
     int[][] rud = new int[rudszam][8];                    // A drótváz rúdjainak (szekciószám(0)) kezdő(1) és végcsomópontjai(2),vastagság(3), a kijelzés megjelölése(0/1/2)(4),koz(5),tipus(6),hossz(7)
     String[][] rudnevek = new String[maxelem][9];         // A szekciokijelzesnel az aktuális rudszelvények nevei 
     int[][] rudhossz = new int[maxelem][9];               // Az aktuális rudszelvények hossza mm-ben 
-    int[][] rudsuly = new int[maxelem][9];               // Az aktuális rudszelvények súlya kg-ban
+    float[][] rudsuly = new float[maxelem][9];            // Az aktuális rudszelvények súlya kg-ban
     int csomopontindex, rudindex;                         // A beolvasott drórváz csompontjainak max. értéke & az éppen kiválasztott szekció sorszáma
     float[][][] limitek = new float[2][3][2];             // A drótváz maximum és minimum értékei  [szekció(1)/teljes(0)], [x(0),y(1),z(2)], 
     // [minimum(0)/maximum(1)] (minx, miny, minz, maxx, maxy, maxz)
@@ -96,8 +96,7 @@ public class racstervezoadatok {
             parancs = parancs + "sum(hossz1) as hossz1, sum(hossz2) as hossz2,sum(hossz3) as hossz3,sum(hossz4) as hossz4,sum(hossz5) as ";
             parancs = parancs + "hossz5,sum(hossz6) as hossz6,sum(hossz7) as hossz7,sum(hossz8) as hossz8 FROM  `racsalap1` WHERE ";
             parancs = parancs + "nev = '" + nev + "' group BY szekcio) as reszadat1 on reszadat1.szekcio = racsalap.szekcio WHERE ";
-            parancs = parancs + "racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";
-            
+            parancs = parancs + "racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";            
             //System.out.println("SQL: "+parancs);
             rs = st.executeQuery(parancs);
             szekcioszam = 0;
@@ -133,6 +132,31 @@ public class racstervezoadatok {
                 rudhossz[szekcioszam][6] = rs.getInt("hossz6");
                 rudhossz[szekcioszam][7] = rs.getInt("hossz7");
                 rudhossz[szekcioszam][8] = rs.getInt("hossz8");
+            }
+            rs.close();
+            // A szelvénysúlyok megállípítása
+            parancs = "select nev,fmsuly from szelveny where nev in";
+            parancs = parancs + "(select distinct reszadat.nev from (select nev1 as nev from racsalap1 where nev= '" + nev + "'";
+            parancs = parancs + "union select nev2 as nev from racsalap1 where nev= '" + nev + "'";
+            parancs = parancs + "union select nev3 as nev from racsalap1 where nev= '" + nev + "'";
+            parancs = parancs + "union select nev4 as nev from racsalap1 where nev= '" + nev + "'";
+            parancs = parancs + "union select nev5 as nev from racsalap1 where nev= '" + nev + "'";
+            parancs = parancs + "union select nev6 as nev from racsalap1 where nev= '" + nev + "'";
+            parancs = parancs + "union select nev7 as nev from racsalap1 where nev= '" + nev + "'";
+            parancs = parancs + "union select nev8 as nev from racsalap1 where nev= '" + nev + "') as reszadat where reszadat.nev <> '');";          
+            //System.out.println("SQL: "+parancs);
+            rs = st.executeQuery(parancs);
+            while (rs.next()) {
+                for (int i = 1; i <= szekcioszam; i++) {
+                    for (int j = 1; j <= 8; j++) {     
+                        rudsuly[i][j] = 0;
+                        if (rudnevek[i][j].equals(rs.getString("nev"))) {
+                            //System.out.println("nev1:'"+rudnevek[i][j]+"'  nev2:'"+rs.getString("nev")+"'");
+                            rudsuly[i][j] = rudhossz[i][j]/1000 * rs.getFloat("fmsuly");
+                            //System.out.println("suly:"+rudsuly[i][j]);
+                        }
+                    }
+                }
             }
             rs.close();
             // A rács köz adatainak a beolvasása
