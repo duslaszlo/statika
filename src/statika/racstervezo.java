@@ -1559,7 +1559,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
     }
 
     private void rudnevek_kijelzo() {
-        int kijelzes;
         racsrudnev1.setEnabled(false);
         racsrudnev2.setEnabled(false);
         racsrudnev3.setEnabled(false);
@@ -1568,60 +1567,28 @@ public class racstervezo extends javax.swing.JInternalFrame {
         racsrudnev6.setEnabled(false);
         racsrudnev7.setEnabled(false);
         racsrudnev8.setEnabled(false);
-        kijelzes = 0;
-        for (int k = 1; k <= racs.adatok1[szekciok.getSelectedIndex()][11]; k++) {
-            kijelzes += racs.adatok1[szekciok.getSelectedIndex()][12];
-        }
-        if (kijelzes > 0) {
+        if (racs.rudhossz[szekciok.getSelectedIndex()][1] > 0) {
             racsrudnev1.setEnabled(true);
         }
-        kijelzes = 0;
-        for (int k = 1; k <= racs.adatok1[szekciok.getSelectedIndex()][11]; k++) {
-            kijelzes += racs.adatok1[szekciok.getSelectedIndex()][13];
-        }
-        if (kijelzes > 0) {
+        if (racs.rudhossz[szekciok.getSelectedIndex()][2] > 0) {
             racsrudnev2.setEnabled(true);
         }
-        kijelzes = 0;
-        for (int k = 1; k <= racs.adatok1[szekciok.getSelectedIndex()][11]; k++) {
-            kijelzes += racs.adatok1[szekciok.getSelectedIndex()][14];
-        }
-        if (kijelzes > 0) {
+        if (racs.rudhossz[szekciok.getSelectedIndex()][3] > 0) {
             racsrudnev3.setEnabled(true);
         }
-        kijelzes = 0;
-        for (int k = 1; k <= racs.adatok1[szekciok.getSelectedIndex()][11]; k++) {
-            kijelzes += racs.adatok1[szekciok.getSelectedIndex()][15];
-        }
-        if (kijelzes > 0) {
+        if (racs.rudhossz[szekciok.getSelectedIndex()][4] > 0) {
             racsrudnev4.setEnabled(true);
         }
-        kijelzes = 0;
-        for (int k = 1; k <= racs.adatok1[szekciok.getSelectedIndex()][11]; k++) {
-            kijelzes += racs.adatok1[szekciok.getSelectedIndex()][16];
-        }
-        if (kijelzes > 0) {
+        if (racs.rudhossz[szekciok.getSelectedIndex()][5] > 0) {
             racsrudnev5.setEnabled(true);
         }
-        kijelzes = 0;
-        for (int k = 1; k <= racs.adatok1[szekciok.getSelectedIndex()][11]; k++) {
-            kijelzes += racs.adatok1[szekciok.getSelectedIndex()][17];
-        }
-        if (kijelzes > 0) {
+        if (racs.rudhossz[szekciok.getSelectedIndex()][6] > 0) {
             racsrudnev6.setEnabled(true);
         }
-        kijelzes = 0;
-        for (int k = 1; k <= racs.adatok1[szekciok.getSelectedIndex()][11]; k++) {
-            kijelzes += racs.adatok1[szekciok.getSelectedIndex()][18];
-        }
-        if (kijelzes > 0) {
+        if (racs.rudhossz[szekciok.getSelectedIndex()][7] > 0) {
             racsrudnev7.setEnabled(true);
         }
-        kijelzes = 0;
-        for (int k = 1; k <= racs.adatok1[szekciok.getSelectedIndex()][11]; k++) {
-            kijelzes += racs.adatok1[szekciok.getSelectedIndex()][19];
-        }
-        if (kijelzes > 0) {
+        if (racs.rudhossz[szekciok.getSelectedIndex()][8] > 0) {
             racsrudnev8.setEnabled(true);
         }
     }
