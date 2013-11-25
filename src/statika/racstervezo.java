@@ -216,6 +216,10 @@ public class racstervezo extends javax.swing.JInternalFrame {
         racskozok = new javax.swing.JTable();
         jLabel34 = new javax.swing.JLabel();
         szekciohossz = new javax.swing.JTextField();
+        jSeparator8 = new javax.swing.JSeparator();
+        jLabel49 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        szelvenysulyok = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
@@ -665,22 +669,53 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
         szekciohossz.setEditable(false);
 
+        jLabel49.setText("Szelvényfelhasználás:");
+
+        szelvenysulyok.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Sorszám", "Szelvénynév", "Hossz (mm)", "Súly (Kg)"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(szelvenysulyok);
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(271, 271, 271)
-                        .addComponent(racskoz_valtoztato))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel34, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(szekciohossz, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                            .addGap(271, 271, 271)
+                            .addComponent(racskoz_valtoztato))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                            .addComponent(jLabel34, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(szekciohossz, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jSeparator8))
+                    .addComponent(jLabel49, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -690,10 +725,16 @@ public class racstervezo extends javax.swing.JInternalFrame {
                     .addComponent(jLabel34)
                     .addComponent(szekciohossz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(racskoz_valtoztato)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel49)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Rácsközök", jPanel4);
@@ -1426,6 +1467,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         szekciok.removeAllItems();
         racs.nev = drotvazak.getSelectedItem().toString();
         racs.adatbeolvaso();
+        szelvenysulyok_tablatorlo();
         csomopontszam.setText(String.valueOf(racs.csomopontindex));
         rudszam.setText(String.valueOf(racs.rudindex));
         szekciok.addItem("Válassz");
@@ -1831,6 +1873,43 @@ public class racstervezo extends javax.swing.JInternalFrame {
         mentes.setEnabled(true);
     }//GEN-LAST:event_elemhozzadoActionPerformed
 
+    private void szelvenysulyok_tablatorlo() {
+        DefaultTableModel tableModel = (DefaultTableModel) szelvenysulyok.getModel();
+        int i = tableModel.getRowCount();
+        if (i > 0) {
+            for (int k = 0; k < i; k++) {
+                tableModel.removeRow(0);
+            }
+        }
+    }
+    
+    private void szelvenysulyok_tablatolto() {
+        DefaultTableModel tableModel = (DefaultTableModel) szelvenysulyok.getModel();
+        szelvenysulyok_tablatorlo();
+        String[] data = new String[4];
+        for (int j = 1; j <= 8; j++) {
+            data[0] = String.valueOf(j);
+            data[1] = String.valueOf(racs.rudnevek[szekciok.getSelectedIndex()][j]);
+            data[2] = String.valueOf(racs.rudhossz[szekciok.getSelectedIndex()][j]);
+            data[3] = String.valueOf(racs.rudsuly[szekciok.getSelectedIndex()][j]);
+            tableModel.addRow(data);
+        }
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(ujelemnev.CENTER);
+        szelvenysulyok.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        szelvenysulyok.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        szelvenysulyok.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        szelvenysulyok.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        // A tábla oszlopszélességei
+        szelvenysulyok.setAutoResizeMode(szelvenysulyok.AUTO_RESIZE_OFF);
+        szelvenysulyok.getColumnModel().getColumn(0).setPreferredWidth(60);
+        szelvenysulyok.getColumnModel().getColumn(1).setPreferredWidth(140);
+        szelvenysulyok.getColumnModel().getColumn(2).setPreferredWidth(80);
+        szelvenysulyok.getColumnModel().getColumn(3).setPreferredWidth(70);
+        szelvenysulyok.setModel(tableModel);
+        szelvenysulyok.setShowGrid(true);
+    }
+
     private void szekcio_kivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_szekcio_kivalasztoActionPerformed
         DefaultTableModel tableModel = (DefaultTableModel) racskozok.getModel();
         String szoveg;
@@ -1839,6 +1918,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
          }
          System.out.println();*/
         racs.kozbeolvaso(szekciok.getSelectedIndex(), 1);
+        szelvenysulyok_tablatolto();
         /*System.out.println("1:");
          for (int i = 1; i <= racs.rudindex; i++) {
          System.out.println("Rud:"+i+" Rud[4]:"+racs.rud[i][4]+"  Rud[5]:"+racs.rud[i][5]);
@@ -2375,14 +2455,13 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private void mentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mentesActionPerformed
         // TODO add your handling code here:        
         for (int i = 1; i <= racs.rudindex; i++) {
-            racs.rud[i][7] = (int) (racs.rudhossz(racs.rud[i][1], racs.rud[i][2])); 
-            
+            racs.rud[i][7] = (int) (racs.rudhossz(racs.rud[i][1], racs.rud[i][2]));
             for (int j = 1; j <= racs.kozszam; j++) {
-                if ((racs.adatok1[j][0]==racs.rud[i][0]) && (racs.adatok1[j][11]==racs.rud[i][5])) {
+                if ((racs.adatok1[j][0] == racs.rud[i][0]) && (racs.adatok1[j][11] == racs.rud[i][5])) {
                     racs.adatok1[j][racs.rud[i][6] + 19] += racs.rud[i][7];
                 }
-            }                        
-            System.out.println("Kezd:"+racs.rud[i][1]+" vég:"+racs.rud[i][2]+"  hossz:"+racs.rud[i][7]+" Szekcio:"+racs.rud[i][0]+" tipus:"+racs.rud[i][6]+" koz:"+racs.rud[i][5]);
+            }
+            //System.out.println("Kezd:"+racs.rud[i][1]+" vég:"+racs.rud[i][2]+"  hossz:"+racs.rud[i][7]+" Szekcio:"+racs.rud[i][0]+" tipus:"+racs.rud[i][6]+" koz:"+racs.rud[i][5]);
         }
         racs.adatrogzito();
         mentes.setEnabled(false);
@@ -2464,6 +2543,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel46;
     private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel48;
+    private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -2475,6 +2555,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -2482,6 +2563,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JSeparator jSeparator8;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField kapcsx;
@@ -2510,6 +2592,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JTable szekcioadatok;
     private javax.swing.JTextField szekciohossz;
     private javax.swing.JComboBox szekciok;
+    private javax.swing.JTable szelvenysulyok;
     private javax.swing.JLabel teljes_nezet;
     private javax.swing.JTextField teljes_suly;
     private javax.swing.JButton ujelem;

@@ -24,8 +24,8 @@ public class racstervezoadatok {
 
     String nev, filenev;                                  // A szelvény neve és a file-neve    
     String parancs;                                       // A MySQL parancsok gyűjtőhelye 
-    int maxelem = 20;                                     // A szekciók maximális száma
-    int maxelem1 = 200;                                     // A szekciók * közök maximális száma
+    int maxelem = 30;                                     // A szekciók maximális száma
+    int maxelem1 = 300;                                     // A szekciók * közök maximális száma
     int szekcioszam;                                      // A drótvázon belüli szekciók száma
     int kozszam;                                          // A drótvázon belüli közök száma
     int csomopontszam = 2000;                             // A csomópontok maximális száma
@@ -44,6 +44,8 @@ public class racstervezoadatok {
     float[][] csomopont = new float[csomopontszam][4];    // A drótváz koordinátái szekcio(0),x(1),y(2),z(3)
     int[][] rud = new int[rudszam][8];                    // A drótváz rúdjainak (szekciószám(0)) kezdő(1) és végcsomópontjai(2),vastagság(3), a kijelzés megjelölése(0/1/2)(4),koz(5),tipus(6),hossz(7)
     String[][] rudnevek = new String[maxelem][9];         // A szekciokijelzesnel az aktuális rudszelvények nevei 
+    int[][] rudhossz = new int[maxelem][9];               // Az aktuális rudszelvények hossza mm-ben 
+    int[][] rudsuly = new int[maxelem][9];               // Az aktuális rudszelvények súlya kg-ban
     int csomopontindex, rudindex;                         // A beolvasott drórváz csompontjainak max. értéke & az éppen kiválasztott szekció sorszáma
     float[][][] limitek = new float[2][3][2];             // A drótváz maximum és minimum értékei  [szekció(1)/teljes(0)], [x(0),y(1),z(2)], 
     // [minimum(0)/maximum(1)] (minx, miny, minz, maxx, maxy, maxz)
@@ -80,11 +82,22 @@ public class racstervezoadatok {
             st = co.createStatement();
             // A rács szekcióinak adatainak a beolvasása
             //parancs = "SELECT * FROM racsalap where nev ='" + nev + "' order by szekcio;";
-            parancs = "SELECT racsalap.*, reszadat.nev1, reszadat.nev2, reszadat.nev3, reszadat.nev4, ";
-            parancs = parancs + "reszadat.nev5, reszadat.nev6, reszadat.nev7, reszadat.nev8 FROM `racsalap` ";
-            parancs = parancs + "left join (SELECT distinct szekcio,`nev1`, `nev2`, `nev3`, `nev4`, `nev5`, `nev6`, ";
-            parancs = parancs + "`nev7`, `nev8` FROM `racsalap1` WHERE nev = '" + nev;
-            parancs = parancs + "') as reszadat on reszadat.szekcio = racsalap.szekcio WHERE racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";
+            /*parancs = "SELECT racsalap.*, reszadat.nev1, reszadat.nev2, reszadat.nev3, reszadat.nev4,reszadat.nev5, reszadat.nev6,";
+            parancs = parancs + " reszadat.nev7, reszadat.nev8,reszadat.hossz1,reszadat.hossz2,reszadat.hossz3,reszadat.hossz4,reszadat.hossz5,reszadat.hossz6,reszadat.hossz7,reszadat.hossz8 FROM `racsalap` ";
+            parancs = parancs + "left join (SELECT distinct szekcio,`nev1`, `nev2`, `nev3`, `nev4`, `nev5`, `nev6`,";
+            parancs = parancs + "`nev7`, `nev8`, hossz1, hossz2, hossz3, hossz4, hossz5, hossz6, hossz7, hossz8 FROM `racsalap1` WHERE nev = '" + nev;
+            parancs = parancs + "') as reszadat on reszadat.szekcio = racsalap.szekcio WHERE racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";*/
+            
+            parancs = "SELECT racsalap.*, reszadat.nev1, reszadat.nev2, reszadat.nev3, reszadat.nev4, reszadat.nev5, reszadat.nev6, ";
+            parancs = parancs + "reszadat.nev7, reszadat.nev8, reszadat1.hossz1, reszadat1.hossz2, reszadat1.hossz3, reszadat1.hossz4, ";
+            parancs = parancs + "reszadat1.hossz5, reszadat1.hossz6, reszadat1.hossz7, reszadat1.hossz8 FROM `racsalap` left join ";
+            parancs = parancs + "(SELECT distinct szekcio,`nev1`, `nev2`, `nev3`, `nev4`, `nev5`, `nev6`,`nev7`, `nev8` FROM `racsalap1` ";
+            parancs = parancs + "WHERE nev = '" + nev + "') as reszadat on reszadat.szekcio = racsalap.szekcio left join (SELECT szekcio, ";
+            parancs = parancs + "sum(hossz1) as hossz1, sum(hossz2) as hossz2,sum(hossz3) as hossz3,sum(hossz4) as hossz4,sum(hossz5) as ";
+            parancs = parancs + "hossz5,sum(hossz6) as hossz6,sum(hossz7) as hossz7,sum(hossz8) as hossz8 FROM  `racsalap1` WHERE ";
+            parancs = parancs + "nev = '" + nev + "' group BY szekcio) as reszadat1 on reszadat1.szekcio = racsalap.szekcio WHERE ";
+            parancs = parancs + "racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";
+            
             //System.out.println("SQL: "+parancs);
             rs = st.executeQuery(parancs);
             szekcioszam = 0;
@@ -112,6 +125,14 @@ public class racstervezoadatok {
                 rudnevek[szekcioszam][6] = rs.getString("nev6");
                 rudnevek[szekcioszam][7] = rs.getString("nev7");
                 rudnevek[szekcioszam][8] = rs.getString("nev8");
+                rudhossz[szekcioszam][1] = rs.getInt("hossz1");
+                rudhossz[szekcioszam][2] = rs.getInt("hossz2");
+                rudhossz[szekcioszam][3] = rs.getInt("hossz3");
+                rudhossz[szekcioszam][4] = rs.getInt("hossz4");
+                rudhossz[szekcioszam][5] = rs.getInt("hossz5");
+                rudhossz[szekcioszam][6] = rs.getInt("hossz6");
+                rudhossz[szekcioszam][7] = rs.getInt("hossz7");
+                rudhossz[szekcioszam][8] = rs.getInt("hossz8");
             }
             rs.close();
             // A rács köz adatainak a beolvasása
@@ -695,6 +716,7 @@ public class racstervezoadatok {
         Stroke[] vonal = new BasicStroke[rudszam];
         Color[] szinek = new Color[rudszam];
         Font Courier16b = new Font("Courier New", Font.BOLD, 16);
+        Font Courier10 = new Font("Courier New", Font.PLAIN, 10);
         //racselemek();
         if (szekcio == 0) {
             g2.setColor(Color.white);
@@ -805,20 +827,18 @@ public class racstervezoadatok {
             if (szekcio == 0) {
                 g2.drawLine(xx1, yy1, xx2, yy2);
                 if (vastagvonal == 0) {
-                    if (i == 1) {
-                        g2.setColor(Color.magenta);
-                    }
                     g2.fillOval(xx1 - 2, yy1 - 2, 4, 4);
                 }
             } else {
                 if (rud[i][0] == szekcio) {
                     g1.drawLine(xx1, yy1, xx2, yy2);
                     if (vastagvonal == 0) {
-                        if (i == 1) {
-                            g1.setColor(Color.magenta);
-                        }
                         g1.fillOval(xx1 - 2, yy1 - 2, 4, 4);
-                    }
+                        g1.setColor(Color.magenta);
+                        g1.setFont(Courier10);
+                        g1.drawString(String.valueOf(rud[i][1]), xx1+3, yy1);
+                        g1.drawString(String.valueOf(rud[i][2]), xx2+3, yy2);
+                    } 
                 }
             }
         }
