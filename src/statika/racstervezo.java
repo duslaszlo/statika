@@ -1467,7 +1467,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         DefaultTableModel tableModel = (DefaultTableModel) szekcioadatok.getModel();
         szekciok.removeAllItems();
         racs.nev = drotvazak.getSelectedItem().toString();
-        racs.adatbeolvaso();
+        racs.adatbeolvaso();                        
         szelvenysulyok_tablatorlo();
         csomopontszam.setText(String.valueOf(racs.csomopontindex));
         rudszam.setText(String.valueOf(racs.rudindex));
@@ -1567,28 +1567,28 @@ public class racstervezo extends javax.swing.JInternalFrame {
         racsrudnev6.setEnabled(false);
         racsrudnev7.setEnabled(false);
         racsrudnev8.setEnabled(false);
-        if (racs.rudhossz[szekciok.getSelectedIndex()][1] > 0) {
+        if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][1] > 0) {
             racsrudnev1.setEnabled(true);
         }
-        if (racs.rudhossz[szekciok.getSelectedIndex()][2] > 0) {
+        if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][2] > 0) {
             racsrudnev2.setEnabled(true);
         }
-        if (racs.rudhossz[szekciok.getSelectedIndex()][3] > 0) {
+        if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][3] > 0) {
             racsrudnev3.setEnabled(true);
         }
-        if (racs.rudhossz[szekciok.getSelectedIndex()][4] > 0) {
+        if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][4] > 0) {
             racsrudnev4.setEnabled(true);
         }
-        if (racs.rudhossz[szekciok.getSelectedIndex()][5] > 0) {
+        if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][5] > 0) {
             racsrudnev5.setEnabled(true);
         }
-        if (racs.rudhossz[szekciok.getSelectedIndex()][6] > 0) {
+        if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][6] > 0) {
             racsrudnev6.setEnabled(true);
         }
-        if (racs.rudhossz[szekciok.getSelectedIndex()][7] > 0) {
+        if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][7] > 0) {
             racsrudnev7.setEnabled(true);
         }
-        if (racs.rudhossz[szekciok.getSelectedIndex()][8] > 0) {
+        if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][8] > 0) {
             racsrudnev8.setEnabled(true);
         }
     }
@@ -1858,8 +1858,9 @@ public class racstervezo extends javax.swing.JInternalFrame {
         for (int j = 1; j <= 8; j++) {
             data[0] = String.valueOf(j);
             data[1] = String.valueOf(racs.rudnevek[szekciok.getSelectedIndex()][j]);
-            data[2] = String.valueOf(racs.rudhossz[szekciok.getSelectedIndex()][j]);
+            data[2] = String.valueOf(racs.szelvenyrudhossz[szekciok.getSelectedIndex()][j]);
             data[3] = String.valueOf(racs.rudsuly[szekciok.getSelectedIndex()][j]);
+            //System.out.println("i:"+szekciok.getSelectedIndex()+" j:"+j+" suly:"+racs.rudsuly[szekciok.getSelectedIndex()][j]);
             tableModel.addRow(data);
         }
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -1892,6 +1893,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 if (i == szekciok.getSelectedIndex()) {
                     szekciosuly += racs.rudsuly[i][j];
                 }
+                //System.out.println("i:"+i+" j:"+j+"  nev:'"+racs.rudnevek[i][j]+"'  suly:"+racs.rudsuly[i][j]);
             }
         }
         teljes_suly.setText(String.valueOf(totalsuly));

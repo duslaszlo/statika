@@ -44,7 +44,7 @@ public class racstervezoadatok {
     float[][] csomopont = new float[csomopontszam][4];    // A drótváz koordinátái szekcio(0),x(1),y(2),z(3)
     int[][] rud = new int[rudszam][8];                    // A drótváz rúdjainak (szekciószám(0)) kezdő(1) és végcsomópontjai(2),vastagság(3), a kijelzés megjelölése(0/1/2)(4),koz(5),tipus(6),hossz(7)
     String[][] rudnevek = new String[maxelem][9];         // A szekciokijelzesnel az aktuális rudszelvények nevei 
-    int[][] rudhossz = new int[maxelem][9];               // Az aktuális rudszelvények hossza mm-ben 
+    int[][] szelvenyrudhossz = new int[maxelem][9];       // Az aktuális rudszelvények hossza mm-ben 
     float[][] rudsuly = new float[maxelem][9];            // Az aktuális rudszelvények súlya kg-ban
     int csomopontindex, rudindex;                         // A beolvasott drórváz csompontjainak max. értéke & az éppen kiválasztott szekció sorszáma
     float[][][] limitek = new float[2][3][2];             // A drótváz maximum és minimum értékei  [szekció(1)/teljes(0)], [x(0),y(1),z(2)], 
@@ -83,11 +83,11 @@ public class racstervezoadatok {
             // A rács szekcióinak adatainak a beolvasása
             //parancs = "SELECT * FROM racsalap where nev ='" + nev + "' order by szekcio;";
             /*parancs = "SELECT racsalap.*, reszadat.nev1, reszadat.nev2, reszadat.nev3, reszadat.nev4,reszadat.nev5, reszadat.nev6,";
-            parancs = parancs + " reszadat.nev7, reszadat.nev8,reszadat.hossz1,reszadat.hossz2,reszadat.hossz3,reszadat.hossz4,reszadat.hossz5,reszadat.hossz6,reszadat.hossz7,reszadat.hossz8 FROM `racsalap` ";
-            parancs = parancs + "left join (SELECT distinct szekcio,`nev1`, `nev2`, `nev3`, `nev4`, `nev5`, `nev6`,";
-            parancs = parancs + "`nev7`, `nev8`, hossz1, hossz2, hossz3, hossz4, hossz5, hossz6, hossz7, hossz8 FROM `racsalap1` WHERE nev = '" + nev;
-            parancs = parancs + "') as reszadat on reszadat.szekcio = racsalap.szekcio WHERE racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";*/
-            
+             parancs = parancs + " reszadat.nev7, reszadat.nev8,reszadat.hossz1,reszadat.hossz2,reszadat.hossz3,reszadat.hossz4,reszadat.hossz5,reszadat.hossz6,reszadat.hossz7,reszadat.hossz8 FROM `racsalap` ";
+             parancs = parancs + "left join (SELECT distinct szekcio,`nev1`, `nev2`, `nev3`, `nev4`, `nev5`, `nev6`,";
+             parancs = parancs + "`nev7`, `nev8`, hossz1, hossz2, hossz3, hossz4, hossz5, hossz6, hossz7, hossz8 FROM `racsalap1` WHERE nev = '" + nev;
+             parancs = parancs + "') as reszadat on reszadat.szekcio = racsalap.szekcio WHERE racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";*/
+
             parancs = "SELECT racsalap.*, reszadat.nev1, reszadat.nev2, reszadat.nev3, reszadat.nev4, reszadat.nev5, reszadat.nev6, ";
             parancs = parancs + "reszadat.nev7, reszadat.nev8, reszadat1.hossz1, reszadat1.hossz2, reszadat1.hossz3, reszadat1.hossz4, ";
             parancs = parancs + "reszadat1.hossz5, reszadat1.hossz6, reszadat1.hossz7, reszadat1.hossz8 FROM `racsalap` left join ";
@@ -96,7 +96,7 @@ public class racstervezoadatok {
             parancs = parancs + "sum(hossz1) as hossz1, sum(hossz2) as hossz2,sum(hossz3) as hossz3,sum(hossz4) as hossz4,sum(hossz5) as ";
             parancs = parancs + "hossz5,sum(hossz6) as hossz6,sum(hossz7) as hossz7,sum(hossz8) as hossz8 FROM  `racsalap1` WHERE ";
             parancs = parancs + "nev = '" + nev + "' group BY szekcio) as reszadat1 on reszadat1.szekcio = racsalap.szekcio WHERE ";
-            parancs = parancs + "racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";            
+            parancs = parancs + "racsalap.`nev` = '" + nev + "' ORDER BY racsalap.szekcio;";
             //System.out.println("SQL: "+parancs);
             rs = st.executeQuery(parancs);
             szekcioszam = 0;
@@ -124,14 +124,14 @@ public class racstervezoadatok {
                 rudnevek[szekcioszam][6] = rs.getString("nev6");
                 rudnevek[szekcioszam][7] = rs.getString("nev7");
                 rudnevek[szekcioszam][8] = rs.getString("nev8");
-                rudhossz[szekcioszam][1] = rs.getInt("hossz1");
-                rudhossz[szekcioszam][2] = rs.getInt("hossz2");
-                rudhossz[szekcioszam][3] = rs.getInt("hossz3");
-                rudhossz[szekcioszam][4] = rs.getInt("hossz4");
-                rudhossz[szekcioszam][5] = rs.getInt("hossz5");
-                rudhossz[szekcioszam][6] = rs.getInt("hossz6");
-                rudhossz[szekcioszam][7] = rs.getInt("hossz7");
-                rudhossz[szekcioszam][8] = rs.getInt("hossz8");
+                szelvenyrudhossz[szekcioszam][1] = rs.getInt("hossz1");
+                szelvenyrudhossz[szekcioszam][2] = rs.getInt("hossz2");
+                szelvenyrudhossz[szekcioszam][3] = rs.getInt("hossz3");
+                szelvenyrudhossz[szekcioszam][4] = rs.getInt("hossz4");
+                szelvenyrudhossz[szekcioszam][5] = rs.getInt("hossz5");
+                szelvenyrudhossz[szekcioszam][6] = rs.getInt("hossz6");
+                szelvenyrudhossz[szekcioszam][7] = rs.getInt("hossz7");
+                szelvenyrudhossz[szekcioszam][8] = rs.getInt("hossz8");
             }
             rs.close();
             // A szelvénysúlyok megállípítása
@@ -143,18 +143,18 @@ public class racstervezoadatok {
             parancs = parancs + "union select nev5 as nev from racsalap1 where nev= '" + nev + "'";
             parancs = parancs + "union select nev6 as nev from racsalap1 where nev= '" + nev + "'";
             parancs = parancs + "union select nev7 as nev from racsalap1 where nev= '" + nev + "'";
-            parancs = parancs + "union select nev8 as nev from racsalap1 where nev= '" + nev + "') as reszadat where reszadat.nev <> '');";          
-            //System.out.println("SQL: "+parancs);
+            parancs = parancs + "union select nev8 as nev from racsalap1 where nev= '" + nev + "') as reszadat where reszadat.nev <> '');";
+            System.out.println("SQL: "+parancs);
             rs = st.executeQuery(parancs);
             while (rs.next()) {
                 for (int i = 1; i <= szekcioszam; i++) {
-                    for (int j = 1; j <= 8; j++) {     
-                        rudsuly[i][j] = 0;
+                    for (int j = 1; j <= 8; j++) {
                         if (rudnevek[i][j].equals(rs.getString("nev"))) {
-                            //System.out.println("nev1:'"+rudnevek[i][j]+"'  nev2:'"+rs.getString("nev")+"'");
-                            rudsuly[i][j] = rudhossz[i][j]/1000 * rs.getFloat("fmsuly");
-                            //System.out.println("suly:"+rudsuly[i][j]);
-                        }
+                            //System.out.println("  nev1:'" + rudnevek[i][j] +"'  nev2:'"+rs.getString("nev")+"'");
+                            rudsuly[i][j] = (szelvenyrudhossz[i][j] * rs.getFloat("fmsuly")) / 1000 ;
+
+                        } 
+                        //System.out.println("i:" + i + " j:" + j + "  nev:'" + rudnevek[i][j] + "'  hossz:"+szelvenyrudhossz[i][j]+"  suly:" + rudsuly[i][j]);
                     }
                 }
             }
@@ -207,7 +207,7 @@ public class racstervezoadatok {
         kepnagyitas[1] = 1;
     }
 
-    public void adatrogzito() {        
+    public void adatrogzito() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
@@ -447,7 +447,7 @@ public class racstervezoadatok {
 
     public void kozbeolvaso(int szekcio, int koz) {
         for (int i = 1; i <= 8; i++) {
-            racselemek[i] =0;
+            racselemek[i] = 0;
         }
         for (int i = 1; i <= kozszam; i++) {
             if ((adatok1[i][0] == szekcio) && ((adatok1[i][11] == koz))) {
@@ -860,9 +860,9 @@ public class racstervezoadatok {
                         g1.fillOval(xx1 - 2, yy1 - 2, 4, 4);
                         g1.setColor(Color.magenta);
                         g1.setFont(Courier10);
-                        g1.drawString(String.valueOf(rud[i][1]), xx1+3, yy1);
-                        g1.drawString(String.valueOf(rud[i][2]), xx2+3, yy2);
-                    } 
+                        g1.drawString(String.valueOf(rud[i][1]), xx1 + 3, yy1);
+                        g1.drawString(String.valueOf(rud[i][2]), xx2 + 3, yy2);
+                    }
                 }
             }
         }
@@ -945,9 +945,9 @@ public class racstervezoadatok {
         adat = 1;
         for (int k = 1; k < csomopontindex; k++) {
             if (k != pontsorszam) {
-                if (rudhossz(pontsorszam,k) < tavolsag) {
-                    adat = k;                    
-                    tavolsag = rudhossz(pontsorszam,k); 
+                if (rudhossz(pontsorszam, k) < tavolsag) {
+                    adat = k;
+                    tavolsag = rudhossz(pontsorszam, k);
                 }
             }
         }
