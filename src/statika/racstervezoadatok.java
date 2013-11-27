@@ -144,7 +144,7 @@ public class racstervezoadatok {
             parancs = parancs + "union select nev6 as nev from racsalap1 where nev= '" + nev + "'";
             parancs = parancs + "union select nev7 as nev from racsalap1 where nev= '" + nev + "'";
             parancs = parancs + "union select nev8 as nev from racsalap1 where nev= '" + nev + "') as reszadat where reszadat.nev <> '');";
-            System.out.println("SQL: "+parancs);
+            //System.out.println("SQL: "+parancs);
             rs = st.executeQuery(parancs);
             while (rs.next()) {
                 for (int i = 1; i <= szekcioszam; i++) {
