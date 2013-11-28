@@ -152,7 +152,6 @@ public class racstervezoadatok {
                         if (rudnevek[i][j].equals(rs.getString("nev"))) {
                             //System.out.println("  nev1:'" + rudnevek[i][j] +"'  nev2:'"+rs.getString("nev")+"'");
                             rudsuly[i][j] = (szelvenyrudhossz[i][j] * rs.getFloat("fmsuly")) / 1000 ;
-
                         } 
                         //System.out.println("i:" + i + " j:" + j + "  nev:'" + rudnevek[i][j] + "'  hossz:"+szelvenyrudhossz[i][j]+"  suly:" + rudsuly[i][j]);
                     }
