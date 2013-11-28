@@ -971,9 +971,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel22)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel22)
                             .addComponent(jSeparator6)
                             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jSeparator1)
@@ -1222,14 +1220,14 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "Azonosító", "X-koord", "Y-koord", "Z-koord", "Kijelzés"
+                "Ssz", "ID", "X-koord", "Y-koord", "Z-koord", "Kijelzés"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true
+                false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1253,15 +1251,22 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "Azonosító", "Kezdcsp.", "Végecsp.", "Szelvény", "Hossz (mm)", "Súly (kg)", "Kijelzés"
+                "Ssz", "ID", "Kezd", "Vége", "Szelvény", "Hossz", "Súly (kg)", "Kijelzés"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane5.setViewportView(rudlista);
@@ -1455,7 +1460,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(szekcio_kivalaszto, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(113, 113, 113)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(szekcio_nezet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(1, 1, 1)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1977,34 +1982,76 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private void csomopontlista_tablatolto() {
         DefaultTableModel tableModel = (DefaultTableModel) csomopontlista.getModel();
         csomopontlista_tablatorlo();
-        String[] data = new String[4];
-        for (int j = 1; j <= 8; j++) {
-            data[0] = String.valueOf(j);
-            data[1] = String.valueOf(racs.rudnevek[szekciok.getSelectedIndex()][j]);
-            if (racs.szelvenyrudhossz[szekciok.getSelectedIndex()][j] == 0) {
-                data[2] = "";
-                data[3] = "";
-            } else {
-                data[2] = String.valueOf(racs.szelvenyrudhossz[szekciok.getSelectedIndex()][j]);
-                data[3] = String.format("%.2f", racs.rudsuly[szekciok.getSelectedIndex()][j]);
-                //System.out.println("i:"+szekciok.getSelectedIndex()+" j:"+j+" suly:"+racs.rudsuly[szekciok.getSelectedIndex()][j]);
+        String[] data = new String[6];
+        int k=1;
+        for (int i = 1; i <= racs.csomopontindex; i++) {
+            if (racs.csomopont[i][0]== szekciok.getSelectedIndex()) {
+                data[0] = String.valueOf(k++);
+                data[1] = String.valueOf(i);
+                data[2] = String.valueOf(racs.csomopont[i][1]);  // x
+                data[3] = String.valueOf(racs.csomopont[i][2]);  // y
+                data[4] = String.valueOf(racs.csomopont[i][3]);  // z
+                tableModel.addRow(data);
             }
-            tableModel.addRow(data);
+        }
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(ujelemnev.CENTER);
+        csomopontlista.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        csomopontlista.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        csomopontlista.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        csomopontlista.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        csomopontlista.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        // A tábla oszlopszélességei
+        csomopontlista.setAutoResizeMode(csomopontlista.AUTO_RESIZE_OFF);
+        csomopontlista.getColumnModel().getColumn(0).setPreferredWidth(40);
+        csomopontlista.getColumnModel().getColumn(1).setPreferredWidth(40);
+        csomopontlista.getColumnModel().getColumn(2).setPreferredWidth(60);
+        csomopontlista.getColumnModel().getColumn(3).setPreferredWidth(60);
+        csomopontlista.getColumnModel().getColumn(4).setPreferredWidth(60);
+        csomopontlista.setModel(tableModel);
+        csomopontlista.setShowGrid(true);
+    }
+    
+    private void rudlista_tablatolto() {
+        DefaultTableModel tableModel = (DefaultTableModel) rudlista.getModel();
+        int k=1;
+        rudlista_tablatorlo();
+        String[] data = new String[8];
+        for (int i = 1; i <= racs.rudindex; i++) {
+            if (racs.rud[i][0]== szekciok.getSelectedIndex()) {
+                data[0] = String.valueOf(k++);
+                data[1] = String.valueOf(i);
+                data[2] = String.valueOf(racs.rud[i][1]);  // kezdcsp
+                data[3] = String.valueOf(racs.rud[i][2]);  // vegecsp
+                data[4] = String.valueOf(racs.rudnevek[szekciok.getSelectedIndex()][racs.rud[i][6]]);  // szelvény
+                data[5] = String.valueOf((int)racs.rudhossz(racs.rud[i][1],racs.rud[i][2]));  // hossz
+                data[6] = String.valueOf((int)(racs.rudsuly[szekciok.getSelectedIndex()][racs.rud[i][6]]));  // súly
+                tableModel.addRow(data);
+            }
         }
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(ujelemnev.CENTER);
-        szelvenysulyok.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        szelvenysulyok.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        szelvenysulyok.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-        szelvenysulyok.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        rudlista.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        rudlista.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        rudlista.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        rudlista.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        rudlista.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        rudlista.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        rudlista.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+        rudlista.getColumnModel().getColumn(7).setCellRenderer(centerRenderer);
         // A tábla oszlopszélességei
-        szelvenysulyok.setAutoResizeMode(szelvenysulyok.AUTO_RESIZE_OFF);
-        szelvenysulyok.getColumnModel().getColumn(0).setPreferredWidth(60);
-        szelvenysulyok.getColumnModel().getColumn(1).setPreferredWidth(140);
-        szelvenysulyok.getColumnModel().getColumn(2).setPreferredWidth(80);
-        szelvenysulyok.getColumnModel().getColumn(3).setPreferredWidth(70);
-        szelvenysulyok.setModel(tableModel);
-        szelvenysulyok.setShowGrid(true);
+        rudlista.setAutoResizeMode(rudlista.AUTO_RESIZE_OFF);
+        rudlista.getColumnModel().getColumn(0).setPreferredWidth(30);
+        rudlista.getColumnModel().getColumn(1).setPreferredWidth(30);
+        rudlista.getColumnModel().getColumn(2).setPreferredWidth(35);
+        rudlista.getColumnModel().getColumn(3).setPreferredWidth(35);
+        rudlista.getColumnModel().getColumn(4).setPreferredWidth(80);
+        rudlista.getColumnModel().getColumn(5).setPreferredWidth(50);
+        rudlista.getColumnModel().getColumn(6).setPreferredWidth(50);
+        rudlista.getColumnModel().getColumn(7).setPreferredWidth(50);
+        rudlista.setModel(tableModel);
+        rudlista.setShowGrid(true);
     }
     
     private void szekcio_kivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_szekcio_kivalasztoActionPerformed
@@ -2028,8 +2075,8 @@ public class racstervezo extends javax.swing.JInternalFrame {
         szekcio_suly.setText(String.format("%.0f", szekciosuly));
         racs.kozbeolvaso(szekciok.getSelectedIndex(), 1);
         szelvenysulyok_tablatolto();
-        csomopontlista_tablatorlo();
-        rudlista_tablatorlo();
+        csomopontlista_tablatolto();
+        rudlista_tablatolto();
         /*System.out.println("1:");
          for (int i = 1; i <= racs.rudindex; i++) {
          System.out.println("Rud:"+i+" Rud[4]:"+racs.rud[i][4]+"  Rud[5]:"+racs.rud[i][5]);
