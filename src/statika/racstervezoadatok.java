@@ -41,11 +41,11 @@ public class racstervezoadatok {
     float[][] mintacspv = new float[15][3];               // A vízszintes mintacsomopont alapkoordinátái: ,x(0),y(1),z(2)
     int[][] mintarud = new int[700][5];                   // Az alap-rúdmintázat irány(0), tipus(1)/1->8/,verzio(2),kezdőcsp(3),végecsp(4);
     float[][] tempcsp = new float[200][3];                // Az átmeneti drótváz-elem koordinátái x(0),y(1),z(2)
-    float[][] csomopont = new float[csomopontszam][4];    // A drótváz koordinátái szekcio(0),x(1),y(2),z(3)
-    int[][] rud = new int[rudszam][8];                    // A drótváz rúdjainak (szekciószám(0)) kezdő(1) és végcsomópontjai(2),vastagság(3), a kijelzés megjelölése(0/1/2)(4),koz(5),tipus(6),hossz(7)
+    float[][] csomopont = new float[csomopontszam][5];    // A drótváz koordinátái szekcio(0),x(1),y(2),z(3),a kijelzés megjelölése(0/1)(4)
+    int[][] rud = new int[rudszam][8];                    // A drótváz rúdjainak (szekciószám(0)) kezdő(1) és végcsomópontjai(2),vastagság(3), a kijelzés megjelölése(0/1)(4),koz(5),tipus(6),hossz(7)
     String[][] rudnevek = new String[maxelem][9];         // A szekciokijelzesnel az aktuális rudszelvények nevei 
     int[][] szelvenyrudhossz = new int[maxelem][9];       // Az aktuális rudszelvények hossza mm-ben 
-    float[][] rudsuly = new float[maxelem][9];            // Az aktuális rudszelvények súlya kg-ban
+    float[][] rudsuly = new float[maxelem][9];            // Az aktuális rudszelvények folyómétersúlya kg-ban
     int csomopontindex, rudindex;                         // A beolvasott drórváz csompontjainak max. értéke & az éppen kiválasztott szekció sorszáma
     float[][][] limitek = new float[2][3][2];             // A drótváz maximum és minimum értékei  [szekció(1)/teljes(0)], [x(0),y(1),z(2)], 
     // [minimum(0)/maximum(1)] (minx, miny, minz, maxx, maxy, maxz)
@@ -151,7 +151,7 @@ public class racstervezoadatok {
                     for (int j = 1; j <= 8; j++) {
                         if (rudnevek[i][j].equals(rs.getString("nev"))) {
                             //System.out.println("  nev1:'" + rudnevek[i][j] +"'  nev2:'"+rs.getString("nev")+"'");
-                            rudsuly[i][j] = (szelvenyrudhossz[i][j] * rs.getFloat("fmsuly")) / 1000 ;
+                            rudsuly[i][j] = rs.getFloat("fmsuly") ;
                         } 
                         //System.out.println("i:" + i + " j:" + j + "  nev:'" + rudnevek[i][j] + "'  hossz:"+szelvenyrudhossz[i][j]+"  suly:" + rudsuly[i][j]);
                     }
@@ -726,6 +726,7 @@ public class racstervezoadatok {
             rud[rudindex][2] = csp2;
             rud[rudindex][5] = koz;
             rud[rudindex][6] = tipus;
+            rud[rudindex][7] = (int)(rudhossz(csp1,csp2));
             //System.out.println("rudindex:" + rudindex[1] +"  szekcio:" + rud[rudindex[1]][0] + " kezdocsp:" + rud[rudindex[1]][1] + "  vegecsp:" + rud[rudindex[1]][2]);
         }
     }

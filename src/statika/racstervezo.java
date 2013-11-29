@@ -1545,7 +1545,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         rudlista_tablatorlo();
         csomopontszam.setText(String.valueOf(racs.csomopontindex));
         rudszam.setText(String.valueOf(racs.rudindex));
-        szekciok.addItem("Válassz");              
+        szekciok.addItem("Válassz");
         if (racs.szekcioszam != 0) {
             for (int i = 1; i <= racs.szekcioszam; i++) {
                 szekciok.addItem(racs.nev + " - szekció: " + i);
@@ -1925,7 +1925,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
             }
         }
     }
-    
+
     private void csomopontlista_tablatorlo() {
         DefaultTableModel tableModel = (DefaultTableModel) csomopontlista.getModel();
         int i = tableModel.getRowCount();
@@ -1935,7 +1935,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
             }
         }
     }
-    
+
     private void rudlista_tablatorlo() {
         DefaultTableModel tableModel = (DefaultTableModel) rudlista.getModel();
         int i = tableModel.getRowCount();
@@ -1958,7 +1958,8 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 data[3] = "";
             } else {
                 data[2] = String.valueOf(racs.szelvenyrudhossz[szekciok.getSelectedIndex()][j]);
-                data[3] = String.format("%.2f", racs.rudsuly[szekciok.getSelectedIndex()][j]);
+                data[3] = String.format("%.2f", ((racs.rudsuly[szekciok.getSelectedIndex()][j]
+                        * racs.szelvenyrudhossz[szekciok.getSelectedIndex()][j])/1000));
                 //System.out.println("i:"+szekciok.getSelectedIndex()+" j:"+j+" suly:"+racs.rudsuly[szekciok.getSelectedIndex()][j]);
             }
             tableModel.addRow(data);
@@ -1983,9 +1984,9 @@ public class racstervezo extends javax.swing.JInternalFrame {
         DefaultTableModel tableModel = (DefaultTableModel) csomopontlista.getModel();
         csomopontlista_tablatorlo();
         String[] data = new String[6];
-        int k=1;
+        int k = 1;
         for (int i = 1; i <= racs.csomopontindex; i++) {
-            if (racs.csomopont[i][0]== szekciok.getSelectedIndex()) {
+            if (racs.csomopont[i][0] == szekciok.getSelectedIndex()) {
                 data[0] = String.valueOf(k++);
                 data[1] = String.valueOf(i);
                 data[2] = String.valueOf(racs.csomopont[i][1]);  // x
@@ -2012,21 +2013,21 @@ public class racstervezo extends javax.swing.JInternalFrame {
         csomopontlista.setModel(tableModel);
         csomopontlista.setShowGrid(true);
     }
-    
+
     private void rudlista_tablatolto() {
         DefaultTableModel tableModel = (DefaultTableModel) rudlista.getModel();
-        int k=1;
+        int k = 1;
         rudlista_tablatorlo();
         String[] data = new String[8];
         for (int i = 1; i <= racs.rudindex; i++) {
-            if (racs.rud[i][0]== szekciok.getSelectedIndex()) {
+            if (racs.rud[i][0] == szekciok.getSelectedIndex()) {
                 data[0] = String.valueOf(k++);
                 data[1] = String.valueOf(i);
                 data[2] = String.valueOf(racs.rud[i][1]);  // kezdcsp
                 data[3] = String.valueOf(racs.rud[i][2]);  // vegecsp
                 data[4] = String.valueOf(racs.rudnevek[szekciok.getSelectedIndex()][racs.rud[i][6]]);  // szelvény
-                data[5] = String.valueOf((int)racs.rudhossz(racs.rud[i][1],racs.rud[i][2]));  // hossz
-                data[6] = String.valueOf((int)(racs.rudsuly[szekciok.getSelectedIndex()][racs.rud[i][6]]));  // súly
+                data[5] = String.valueOf(racs.rud[i][7]);  // hossz
+                data[6] = String.format("%.2f", racs.rudsuly[szekciok.getSelectedIndex()][racs.rud[i][6]]);  // súly
                 tableModel.addRow(data);
             }
         }
@@ -2053,10 +2054,10 @@ public class racstervezo extends javax.swing.JInternalFrame {
         rudlista.setModel(tableModel);
         rudlista.setShowGrid(true);
     }
-    
+
     private void szekcio_kivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_szekcio_kivalasztoActionPerformed
         DefaultTableModel tableModel = (DefaultTableModel) racskozok.getModel();
-        float szekciosuly = 0,totalsuly = 0;
+        float szekciosuly = 0, totalsuly = 0;
         String szoveg;
         /*for (int i = 1; i <= racs.rudindex; i++) {
          System.out.println("Rud:"+i+" Rud[4]:"+racs.rud[i][4]+"  Rud[5]:"+racs.rud[i][5]);
@@ -2064,14 +2065,14 @@ public class racstervezo extends javax.swing.JInternalFrame {
          System.out.println();*/
         for (int i = 1; i <= racs.szekcioszam; i++) {
             for (int j = 1; j <= 8; j++) {
-                totalsuly += racs.rudsuly[i][j];
+                totalsuly += (racs.szelvenyrudhossz[i][j] * racs.rudsuly[i][j]) / 1000;
                 if (i == szekciok.getSelectedIndex()) {
-                    szekciosuly += racs.rudsuly[i][j];
+                    szekciosuly += (racs.szelvenyrudhossz[i][j] * racs.rudsuly[i][j]) / 1000;
                 }
                 //System.out.println("i:"+i+" j:"+j+"  nev:'"+racs.rudnevek[i][j]+"'  suly:"+racs.rudsuly[i][j]);
             }
-        }        
-        teljes_suly.setText(String.format("%.0f", totalsuly));        
+        }
+        teljes_suly.setText(String.format("%.0f", totalsuly));
         szekcio_suly.setText(String.format("%.0f", szekciosuly));
         racs.kozbeolvaso(szekciok.getSelectedIndex(), 1);
         szelvenysulyok_tablatolto();
