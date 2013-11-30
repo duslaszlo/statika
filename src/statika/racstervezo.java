@@ -283,10 +283,11 @@ public class racstervezo extends javax.swing.JInternalFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         csomopontlista = new javax.swing.JTable();
         jLabel50 = new javax.swing.JLabel();
-        jSeparator9 = new javax.swing.JSeparator();
         jLabel51 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         rudlista = new javax.swing.JTable();
+        rudlista_megjelolo = new javax.swing.JButton();
+        csomopontlista_megjelolo = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         racskoz_valtoztato = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -971,12 +972,12 @@ public class racstervezo extends javax.swing.JInternalFrame {
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel22)
                             .addComponent(jSeparator6)
                             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jSeparator1)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel22)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel33)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1271,6 +1272,20 @@ public class racstervezo extends javax.swing.JInternalFrame {
         });
         jScrollPane5.setViewportView(rudlista);
 
+        rudlista_megjelolo.setText("Rúdlista megjelölés");
+        rudlista_megjelolo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rudlista_megjeloloActionPerformed(evt);
+            }
+        });
+
+        csomopontlista_megjelolo.setText("Csomópont megjelölés");
+        csomopontlista_megjelolo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                csomopontlista_megjeloloActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -1280,34 +1295,37 @@ public class racstervezo extends javax.swing.JInternalFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(jSeparator9)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addComponent(jLabel50)
-                        .addGap(0, 279, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
+                        .addComponent(csomopontlista_megjelolo, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel51)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(rudlista_megjelolo, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel50)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel50)
+                    .addComponent(csomopontlista_megjelolo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel51, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rudlista_megjelolo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel51, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(105, 105, 105))
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(114, 114, 114))
         );
 
         jTabbedPane1.addTab("Alkotóelemek", jPanel3);
@@ -1451,16 +1469,16 @@ public class racstervezo extends javax.swing.JInternalFrame {
                         .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                                .addGap(0, 26, Short.MAX_VALUE)
                                 .addComponent(jLabel25)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(szekciok, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(szekcio_kivalaszto, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(szekcio_nezet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(1, 1, 1)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1959,7 +1977,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
             } else {
                 data[2] = String.valueOf(racs.szelvenyrudhossz[szekciok.getSelectedIndex()][j]);
                 data[3] = String.format("%.2f", ((racs.rudsuly[szekciok.getSelectedIndex()][j]
-                        * racs.szelvenyrudhossz[szekciok.getSelectedIndex()][j])/1000));
+                        * racs.szelvenyrudhossz[szekciok.getSelectedIndex()][j]) / 1000));
                 //System.out.println("i:"+szekciok.getSelectedIndex()+" j:"+j+" suly:"+racs.rudsuly[szekciok.getSelectedIndex()][j]);
             }
             tableModel.addRow(data);
@@ -1993,6 +2011,11 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 data[3] = String.valueOf(racs.csomopont[i][2]);  // y
                 data[4] = String.valueOf(racs.csomopont[i][3]);  // z
                 tableModel.addRow(data);
+                if (racs.csomopont[i][4] == 1) {
+                    tableModel.setValueAt(true, k - 1, 5);
+                } else {
+                    tableModel.setValueAt(false, k - 1, 5);
+                }
             }
         }
 
@@ -2029,6 +2052,11 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 data[5] = String.valueOf(racs.rud[i][7]);  // hossz
                 data[6] = String.format("%.2f", racs.rudsuly[szekciok.getSelectedIndex()][racs.rud[i][6]]);  // súly
                 tableModel.addRow(data);
+                if (racs.rud[i][4] == 1) {
+                    tableModel.setValueAt(true, k - 1, 7);
+                } else {
+                    tableModel.setValueAt(false, k - 1, 7);
+                }
             }
         }
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -2071,6 +2099,12 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 }
                 //System.out.println("i:"+i+" j:"+j+"  nev:'"+racs.rudnevek[i][j]+"'  suly:"+racs.rudsuly[i][j]);
             }
+        }
+        for (int i = 1; i <= racs.rudindex; i++) {
+            racs.rud[i][4] = 0;
+        }
+        for (int i = 1; i <= racs.csomopontindex; i++) {
+            racs.csomopont[i][4] = 0;
         }
         teljes_suly.setText(String.format("%.0f", totalsuly));
         szekcio_suly.setText(String.format("%.0f", szekciosuly));
@@ -2627,6 +2661,32 @@ public class racstervezo extends javax.swing.JInternalFrame {
         csomopontszam.setText(String.valueOf(racs.csomopontindex));
         rudszam.setText(String.valueOf(racs.rudindex));
     }//GEN-LAST:event_mentesActionPerformed
+
+    private void rudlista_megjeloloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rudlista_megjeloloActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel) rudlista.getModel();
+        for (int i = 0; i < racs.rudindex; i++) {
+            if (tableModel.getValueAt(i, 7).toString().equals("true")) {
+                racs.rud[i][4] = 1;
+            } else {
+                racs.rud[i][4] = 0;
+            }
+        }
+        szekcio_kepkitevo();
+    }//GEN-LAST:event_rudlista_megjeloloActionPerformed
+
+    private void csomopontlista_megjeloloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_csomopontlista_megjeloloActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel) csomopontlista.getModel();
+        for (int i = 0; i < racs.csomopontindex; i++) {
+            if (tableModel.getValueAt(i, 5).toString().equals("true")) {
+                racs.csomopont[i][4] = 1;
+            } else {
+                racs.csomopont[i][4] = 0;
+            }
+        }
+        szekcio_kepkitevo();
+    }//GEN-LAST:event_csomopontlista_megjeloloActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Elemmodosito;
     private javax.swing.JTextField Magassag;
@@ -2634,6 +2694,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JTextField alsoszelxy;
     private javax.swing.JTextField alsoszelyz;
     private javax.swing.JTable csomopontlista;
+    private javax.swing.JButton csomopontlista_megjelolo;
     private javax.swing.JTextField csomopontszam;
     private javax.swing.JButton drotvaz_kivalaszto;
     private javax.swing.JComboBox drotvazak;
@@ -2728,7 +2789,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator8;
-    private javax.swing.JSeparator jSeparator9;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField kapcsx;
     private javax.swing.JTextField kapcsy;
@@ -2749,6 +2809,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox racsrudnev7;
     private javax.swing.JComboBox racsrudnev8;
     private javax.swing.JTable rudlista;
+    private javax.swing.JButton rudlista_megjelolo;
     private javax.swing.JTextField rudszam;
     private javax.swing.JButton szekcio_kivalaszto;
     private javax.swing.JLabel szekcio_nezet;
