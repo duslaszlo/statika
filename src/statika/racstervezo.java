@@ -2001,7 +2001,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private void csomopontlista_tablatolto() {
         DefaultTableModel tableModel = (DefaultTableModel) csomopontlista.getModel();
         csomopontlista_tablatorlo();
-        String[] data = new String[6];
+        String[] data = new String[5];
         int k = 1;
         for (int i = 1; i <= racs.csomopontindex; i++) {
             if (racs.csomopont[i][0] == szekciok.getSelectedIndex()) {
@@ -2010,11 +2010,11 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 data[2] = String.valueOf(racs.csomopont[i][1]);  // x
                 data[3] = String.valueOf(racs.csomopont[i][2]);  // y
                 data[4] = String.valueOf(racs.csomopont[i][3]);  // z
-                tableModel.addRow(data);
+                tableModel.addRow(data);                
                 if (racs.csomopont[i][4] == 1) {
-                    tableModel.setValueAt(true, k - 1, 5);
+                    tableModel.setValueAt(true, k - 2, 5);
                 } else {
-                    tableModel.setValueAt(false, k - 1, 5);
+                    tableModel.setValueAt(false, k - 2, 5);
                 }
             }
         }
@@ -2053,9 +2053,9 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 data[6] = String.format("%.2f", racs.rudsuly[szekciok.getSelectedIndex()][racs.rud[i][6]]);  // súly
                 tableModel.addRow(data);
                 if (racs.rud[i][4] == 1) {
-                    tableModel.setValueAt(true, k - 1, 7);
+                    tableModel.setValueAt(true, k - 2, 7);
                 } else {
-                    tableModel.setValueAt(false, k - 1, 7);
+                    tableModel.setValueAt(false, k - 2, 7);
                 }
             }
         }
@@ -2068,7 +2068,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
         rudlista.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
         rudlista.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
         rudlista.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
-        rudlista.getColumnModel().getColumn(7).setCellRenderer(centerRenderer);
         // A tábla oszlopszélességei
         rudlista.setAutoResizeMode(rudlista.AUTO_RESIZE_OFF);
         rudlista.getColumnModel().getColumn(0).setPreferredWidth(30);
@@ -2078,7 +2077,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
         rudlista.getColumnModel().getColumn(4).setPreferredWidth(80);
         rudlista.getColumnModel().getColumn(5).setPreferredWidth(50);
         rudlista.getColumnModel().getColumn(6).setPreferredWidth(50);
-        rudlista.getColumnModel().getColumn(7).setPreferredWidth(50);
         rudlista.setModel(tableModel);
         rudlista.setShowGrid(true);
     }
