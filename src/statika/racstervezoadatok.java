@@ -740,6 +740,7 @@ public class racstervezoadatok {
         Stroke[] vonal = new BasicStroke[rudszam];
         Color[] szinek = new Color[rudszam];
         Font Courier16b = new Font("Courier New", Font.BOLD, 16);
+        Font Courier24b = new Font("Courier New", Font.BOLD, 24);
         Font Courier10 = new Font("Courier New", Font.PLAIN, 10);
         //racselemek();
         if (szekcio == 0) {
@@ -770,7 +771,6 @@ public class racstervezoadatok {
         }
         // Az egérgörgetésnél a képarány megváltozik
         arany *= kepnagyitas[tetel];
-
         //System.out.println("Szekcio:"+szekcio+" arány:"+arany);
         //System.out.println("arany:" + arany + " height:" + height + " keret:" + keret + " maxx:" + limitek[tetel][0][1] + "  minx:" + limitek[tetel][0][0] + " maxy:" + limitek[tetel][1][1] + "  miny:" + limitek[tetel][1][0]);
         // A rajz    
@@ -817,6 +817,7 @@ public class racstervezoadatok {
                 g1.setStroke(vonal[i]);
                 g1.setColor(szinek[i]);
                 if (rud[i][4] == 1)  {
+                    vonal[i] = new BasicStroke(2);
                     g1.setColor(Color.red);
                 }
             }
@@ -863,15 +864,19 @@ public class racstervezoadatok {
                         g1.fillOval(xx1 - 2, yy1 - 2, 4, 4);
                         g1.setColor(Color.magenta);                        
                         g1.setFont(Courier10);
-                        if (csomopont[rud[i][1]][4]==1) {
-                            g1.setFont(Courier16b);
-                        }
                         g1.drawString(String.valueOf(rud[i][1]), xx1 + 3, yy1);
-                        g1.setFont(Courier10);
-                        if (csomopont[rud[i][2]][4]==1) {
-                            g1.setFont(Courier16b);
+                        g1.drawString(String.valueOf(rud[i][2]), xx2 + 3, yy2);                                                
+                    } else {
+                        if (csomopont[rud[i][1]][4]==1) {
+                            g1.setColor(Color.red);
+                            g1.setFont(Courier24b);
+                            g1.drawString(String.valueOf(rud[i][1]+1), xx1 + 5, yy1);
                         }
-                        g1.drawString(String.valueOf(rud[i][2]), xx2 + 3, yy2);
+                        if (csomopont[rud[i][2]][4]==1) {
+                            g1.setColor(Color.red);
+                            g1.setFont(Courier24b);
+                            g1.drawString(String.valueOf(rud[i][2]+1), xx2 + 5, yy2);
+                        }                        
                     }
                 }
             }

@@ -2077,6 +2077,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         rudlista.getColumnModel().getColumn(4).setPreferredWidth(80);
         rudlista.getColumnModel().getColumn(5).setPreferredWidth(50);
         rudlista.getColumnModel().getColumn(6).setPreferredWidth(50);
+        rudlista.getColumnModel().getColumn(6).setPreferredWidth(40);
         rudlista.setModel(tableModel);
         rudlista.setShowGrid(true);
     }
