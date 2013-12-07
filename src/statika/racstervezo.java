@@ -396,7 +396,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
         jSeparator5.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        felsoszelyz.setText("100");
+        felsoszelyz.setText("3160");
 
         elemhozzado.setText("Szekció hozzáadás");
         elemhozzado.addActionListener(new java.awt.event.ActionListener() {
@@ -405,23 +405,23 @@ public class racstervezo extends javax.swing.JInternalFrame {
             }
         });
 
-        felsoszelxy.setText("200");
+        felsoszelxy.setText("3750");
 
         jLabel8.setText("Felső szélesség YZ:");
 
         keresni.setText("Keresni");
 
-        alsoszelyz.setText("300");
+        alsoszelyz.setText("7000");
 
         irany.setText("Vízszintes");
 
         jLabel7.setText("Felső szélesség XY:");
 
-        alsoszelxy.setText("300");
+        alsoszelxy.setText("7000");
 
         jLabel6.setText("Alsó szélesség YZ:");
 
-        Magassag.setText("500");
+        Magassag.setText("24000");
 
         jLabel5.setText("Alsó szélesség XY:");
 
@@ -429,7 +429,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
         jLabel9.setText("Kapcsolati X-koord:");
 
-        elemszamok.setText("2");
+        elemszamok.setText("8");
 
         jLabel3.setText("Elemszám:");
 
@@ -1785,6 +1785,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         DefaultTableModel tableModel = (DefaultTableModel) szekcioadatok.getModel();
         float adat = 0;
         float alsoxy, alsoyz, felsoxy, felsoyz;
+        mentes.setEnabled(true);
         if (!racs.nev.toString().equals("")) {
             racs.szekcioszam++;
             racs.adatok[racs.szekcioszam][0] = racs.szekcioszam;
@@ -1823,16 +1824,6 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 } else {
                     tableModel.setValueAt(false, i - 1, 12);
                 }
-                if (racs.adatok[i][13] == 1) {
-                    tableModel.setValueAt(true, i - 1, 13);
-                } else {
-                    tableModel.setValueAt(false, i - 1, 13);
-                }
-                if (racs.adatok[i][14] == 1) {
-                    tableModel.setValueAt(true, i - 1, 14);
-                } else {
-                    tableModel.setValueAt(false, i - 1, 14);
-                }
             }
             // Az összes oszlop középre igazítása
             DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -1867,22 +1858,22 @@ public class racstervezo extends javax.swing.JInternalFrame {
                     // A köz sorszáma
                     racs.adatok1[racs.kozszam][11] = i;
                     racs.adatok1[racs.kozszam][0] = racs.szekcioszam;
-                    racs.adatok1[racs.kozszam][2] = Integer.parseInt(String.valueOf(alsoxy));
-                    racs.adatok1[racs.kozszam][3] = Integer.parseInt(String.valueOf(alsoyz));
+                    racs.adatok1[racs.kozszam][2] = (int)alsoxy;
+                    racs.adatok1[racs.kozszam][3] = (int)alsoyz;
                     adat = (Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText())) / Integer.parseInt(elemszamok.getText());
                     felsoxy = Integer.parseInt(alsoszelxy.getText()) - i * adat;
-                    racs.adatok1[racs.kozszam][4] = Integer.parseInt(String.valueOf(felsoxy));
+                    racs.adatok1[racs.kozszam][4] = (int)felsoxy;
                     adat = (Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / Integer.parseInt(elemszamok.getText());
                     felsoyz = Integer.parseInt(alsoszelyz.getText()) - i * adat;
-                    racs.adatok1[racs.kozszam][5] = Integer.parseInt(String.valueOf(felsoyz));
+                    racs.adatok1[racs.kozszam][5] = (int)felsoyz;
                     alsoxy = felsoxy;
                     alsoyz = felsoyz;
                     // eltolasxy
                     adat = Float.parseFloat(eltolasxy.getText()) / Float.parseFloat(elemszamok.getText());
-                    racs.adatok1[racs.kozszam][9] = Integer.parseInt(String.valueOf(adat));
+                    racs.adatok1[racs.kozszam][9] = (int)adat;
                     //  eltolasyz
                     adat = Float.parseFloat(eltolasyz.getText()) / Float.parseFloat(elemszamok.getText());
-                    racs.adatok1[racs.kozszam][10] = Integer.parseInt(String.valueOf(adat));
+                    racs.adatok1[racs.kozszam][10] = (int)adat;
                     racs.adatok1[racs.kozszam][12] = 1;
                     racs.adatok1[racs.kozszam][13] = 1;
                     if (!irany.isSelected()) {
@@ -1893,35 +1884,35 @@ public class racstervezo extends javax.swing.JInternalFrame {
                         adat += ((Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
                         //System.out.println("adat:"+adat);
                         adat = Integer.parseInt(kapcsx.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][6] = Integer.parseInt(String.valueOf(adat));
+                        racs.adatok1[racs.kozszam][6] = (int)adat;
                         // y 
                         adat = Integer.parseInt(Magassag.getText()) / Integer.parseInt(elemszamok.getText());
                         adat = Integer.parseInt(kapcsy.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][7] = Integer.parseInt(String.valueOf(adat));
+                        racs.adatok1[racs.kozszam][7] = (int)adat;
                         // z 
                         adat = (Integer.parseInt(eltolasyz.getText()) / Integer.parseInt(elemszamok.getText())) * 2;
                         adat += ((Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
                         adat = Integer.parseInt(kapcsz.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][8] = Integer.parseInt(String.valueOf(adat));
+                        racs.adatok1[racs.kozszam][8] = (int)adat;
                     } else {
                         // A vízszintes szakaszok
                         // x 
                         adat = Integer.parseInt(Magassag.getText()) / Integer.parseInt(elemszamok.getText());
                         adat = Integer.parseInt(kapcsx.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][6] = Integer.parseInt(String.valueOf(adat));
+                        racs.adatok1[racs.kozszam][6] = (int)adat;
                         // y                                                        
                         adat = (Integer.parseInt(eltolasxy.getText()) / Integer.parseInt(elemszamok.getText())) * 2;
                         adat += ((Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
                         adat = Integer.parseInt(kapcsy.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][7] = Integer.parseInt(String.valueOf(adat));
+                        racs.adatok1[racs.kozszam][7] = (int)adat;
                         // z                             
                         adat = (Integer.parseInt(eltolasyz.getText()) / Integer.parseInt(elemszamok.getText())) * 2;
                         adat += ((Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
-                        racs.adatok1[racs.kozszam][8] = Integer.parseInt(String.valueOf(adat));
+                        racs.adatok1[racs.kozszam][8] = (int)adat;
                     }
                     // A köz magassága
                     adat = Integer.parseInt(Magassag.getText()) / Integer.parseInt(elemszamok.getText());
-                    racs.adatok1[racs.kozszam][1] = Integer.parseInt(String.valueOf(adat));
+                    racs.adatok1[racs.kozszam][1] = (int)adat;
                 }
             }
             // A szekciok lista feltöltése
@@ -2686,6 +2677,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         }
         szekcio_kepkitevo();
     }//GEN-LAST:event_csomopontlista_megjeloloActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Elemmodosito;
     private javax.swing.JTextField Magassag;
