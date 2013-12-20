@@ -32,6 +32,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
         initComponents();
         racs.nev = "";
         racselemek_kijelzo_torles();
+        kisrajz_kepkitevo();
         mentes.setEnabled(false);
         // A mintaelem beolvasása
         racs.mintaindexf = 0;
@@ -155,6 +156,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         ujelemnev = new javax.swing.JTextField();
         ujelem = new javax.swing.JButton();
         drotvazak = new javax.swing.JComboBox();
@@ -176,9 +178,8 @@ public class racstervezo extends javax.swing.JInternalFrame {
         elemhozzado = new javax.swing.JButton();
         felsoszelxy = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        keresni = new javax.swing.JRadioButton();
         alsoszelyz = new javax.swing.JTextField();
-        irany = new javax.swing.JRadioButton();
+        vizszintes = new javax.swing.JRadioButton();
         jLabel7 = new javax.swing.JLabel();
         alsoszelxy = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -210,6 +211,9 @@ public class racstervezo extends javax.swing.JInternalFrame {
         szekcio_suly = new javax.swing.JTextField();
         jLabel47 = new javax.swing.JLabel();
         jLabel48 = new javax.swing.JLabel();
+        kettamaszu = new javax.swing.JRadioButton();
+        fuggoleges = new javax.swing.JRadioButton();
+        kisrajz = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
@@ -396,7 +400,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
         jSeparator5.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        felsoszelyz.setText("1880");
+        felsoszelyz.setText("1000");
 
         elemhozzado.setText("Szekció hozzáadás");
         elemhozzado.addActionListener(new java.awt.event.ActionListener() {
@@ -405,45 +409,49 @@ public class racstervezo extends javax.swing.JInternalFrame {
             }
         });
 
-        felsoszelxy.setText("0");
+        felsoszelxy.setText("1000");
 
         jLabel8.setText("Felső szélesség YZ:");
 
-        keresni.setText("Keresni");
+        alsoszelyz.setText("1000");
 
-        alsoszelyz.setText("2804");
-
-        irany.setText("Vízszintes");
+        buttonGroup1.add(vizszintes);
+        vizszintes.setText("Vízszintes");
+        vizszintes.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                vizszintesStateChanged(evt);
+            }
+        });
 
         jLabel7.setText("Felső szélesség XY:");
 
-        alsoszelxy.setText("2905");
+        alsoszelxy.setText("1000");
 
         jLabel6.setText("Alsó szélesség YZ:");
 
-        Magassag.setText("6000");
+        Magassag.setText("24000");
 
         jLabel5.setText("Alsó szélesség XY:");
 
-        kapcsx.setText("3500");
+        kapcsx.setText("0");
 
         jLabel9.setText("Kapcsolati X-koord:");
 
-        elemszamok.setText("3");
+        elemszamok.setText("12");
 
         jLabel3.setText("Elemszám:");
 
         jLabel10.setText("Kapcsolati Y-koord:");
 
-        kapcsy.setText("26000");
+        kapcsy.setText("0");
 
         jLabel11.setText("Kapcsolati Z-koord:");
 
-        kapcsz.setText("2080");
+        kapcsz.setText("0");
 
         jLabel12.setText("Eltolás XY:");
 
-        eltolasxy.setText("4546");
+        eltolasxy.setText("0");
 
         jLabel13.setText("Eltolás YZ:");
 
@@ -481,6 +489,23 @@ public class racstervezo extends javax.swing.JInternalFrame {
 
         jLabel48.setText("Kg");
 
+        buttonGroup1.add(kettamaszu);
+        kettamaszu.setText("Kéttámaszú");
+        kettamaszu.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                kettamaszuStateChanged(evt);
+            }
+        });
+
+        buttonGroup1.add(fuggoleges);
+        fuggoleges.setSelected(true);
+        fuggoleges.setText("Függőleges");
+        fuggoleges.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fuggolegesStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -488,31 +513,90 @@ public class racstervezo extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(61, 61, 61)
-                        .addComponent(elemhozzado)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(Magassag)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(alsoszelxy, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(alsoszelyz, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(7, 7, 7)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(felsoszelxy, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(elemszamok, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(84, 84, 84))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(kapcsz, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(kapcsy, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(kapcsx, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(felsoszelyz, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(eltolasxy, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                    .addComponent(konzolhossz, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                                                    .addComponent(eltolasyz, javax.swing.GroupLayout.Alignment.TRAILING))))
+                                        .addGap(2, 2, 2))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(kisrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(kettamaszu)
+                                    .addComponent(fuggoleges)
+                                    .addComponent(elemhozzado)
+                                    .addComponent(vizszintes, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(2, 2, 2)))
+                        .addGap(82, 82, 82))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel32)
                             .addComponent(jLabel45))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(csomopontszam)
-                                .addGap(31, 31, 31))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(teljes_suly, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel47)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(csomopontszam, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                            .addComponent(teljes_suly))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel47)
+                        .addGap(10, 10, 10)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(2, 2, 2)
@@ -520,44 +604,19 @@ public class racstervezo extends javax.swing.JInternalFrame {
                             .addComponent(jLabel46))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(rudszam, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
-                            .addComponent(szekcio_suly))
+                            .addComponent(rudszam)
+                            .addComponent(szekcio_suly, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel48)
-                        .addGap(72, 72, 72))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(Magassag, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(elemszamok, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(alsoszelxy, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(alsoszelyz, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(felsoszelxy, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(felsoszelyz, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(kapcsx, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(kapcsy, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(kapcsz, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(eltolasxy, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(eltolasyz, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(konzolhossz, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(30, 30, 30)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(irany, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(keresni, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(26, Short.MAX_VALUE))))
+                        .addComponent(jLabel48, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSeparator7)
+                        .addGap(84, 84, 84))))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(265, Short.MAX_VALUE)))
+                    .addContainerGap(276, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -565,54 +624,64 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(Magassag, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Magassag, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(elemszamok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(keresni))
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(alsoszelxy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(irany))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(alsoszelxy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(alsoszelyz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel7)
+                            .addComponent(felsoszelxy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(felsoszelyz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(alsoszelyz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addGap(8, 8, 8)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(felsoszelxy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(kapcsx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(kapcsy, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(kapcsz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(eltolasxy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(eltolasyz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel13))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(konzolhossz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(kisrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(fuggoleges)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(vizszintes)
+                        .addGap(1, 1, 1)
+                        .addComponent(kettamaszu)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(elemhozzado)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(felsoszelyz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8)
-                    .addComponent(elemhozzado))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(kapcsx, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(kapcsy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(kapcsz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(eltolasxy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(eltolasyz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(konzolhossz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -628,7 +697,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                     .addComponent(jLabel46)
                     .addComponent(szekcio_suly, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel48))
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addGap(55, 55, 55))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(66, 66, 66)
@@ -1542,11 +1611,12 @@ public class racstervezo extends javax.swing.JInternalFrame {
                             .addComponent(jLabel37)
                             .addComponent(vastagvonalak))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(teljes_nezet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(szekcio_nezet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jSeparator4)
-                            .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(szekcio_nezet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jSeparator4)
+                                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(teljes_nezet, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1652,6 +1722,34 @@ public class racstervezo extends javax.swing.JInternalFrame {
         ftipus6.setEnabled(false);
         ftipus7.setEnabled(false);
         ftipus8.setEnabled(false);
+        ftipus1.setValue(1);
+                ftipus2.setValue(0);
+                ftipus3.setValue(0);
+                ftipus4.setValue(0);
+                ftipus5.setValue(0);
+                ftipus6.setValue(0);
+                ftipus7.setValue(0);
+                ftipus8.setValue(0);
+                ftipus1text.setText("");
+                ftipus2text.setText("");
+                ftipus3text.setText("");
+                ftipus4text.setText("");
+                ftipus5text.setText("");
+                ftipus6text.setText("");
+                ftipus7text.setText("");
+                ftipus8text.setText("");
+                vtipus1.setValue(1);
+                vtipus2.setValue(0);
+                vtipus3.setValue(0);
+                vtipus4.setValue(0);
+                vtipus5.setValue(0);
+                vtipus6.setValue(0);
+                vtipus1text.setText("");
+                vtipus2text.setText("");
+                vtipus3text.setText("");
+                vtipus4text.setText("");
+                vtipus5text.setText("");
+                vtipus6text.setText("");
     }
 
     private void rudnevek_kijelzo() {
@@ -1701,7 +1799,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 ftipus6.setEnabled(true);
                 ftipus7.setEnabled(true);
                 ftipus8.setEnabled(true);
-                // A fúggőleges elemek kijelzése
+                // A függőleges elemek kijelzése
                 ftipus1.setValue(racs.racselemek[1]);
                 ftipus2.setValue(racs.racselemek[2]);
                 ftipus3.setValue(racs.racselemek[3]);
@@ -1710,6 +1808,15 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 ftipus6.setValue(racs.racselemek[6]);
                 ftipus7.setValue(racs.racselemek[7]);
                 ftipus8.setValue(racs.racselemek[8]);
+                ftipus1text.setText(String.valueOf(racs.racselemek[1]));
+                ftipus2text.setText(String.valueOf(racs.racselemek[2]));
+                ftipus3text.setText(String.valueOf(racs.racselemek[3]));
+                ftipus4text.setText(String.valueOf(racs.racselemek[4]));
+                ftipus5text.setText(String.valueOf(racs.racselemek[5]));
+                ftipus6text.setText(String.valueOf(racs.racselemek[6]));
+                ftipus7text.setText(String.valueOf(racs.racselemek[7]));
+                ftipus8text.setText(String.valueOf(racs.racselemek[8]));
+                
             } else {
                 // a vízszintes elemek kijelzése
                 vtipus1.setEnabled(true);
@@ -1724,10 +1831,27 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 vtipus4.setValue(racs.racselemek[4]);
                 vtipus5.setValue(racs.racselemek[5]);
                 vtipus6.setValue(racs.racselemek[6]);
+                vtipus1text.setText(String.valueOf(racs.racselemek[1]));
+                vtipus2text.setText(String.valueOf(racs.racselemek[2]));
+                vtipus3text.setText(String.valueOf(racs.racselemek[3]));
+                vtipus4text.setText(String.valueOf(racs.racselemek[4]));
+                vtipus5text.setText(String.valueOf(racs.racselemek[5]));
+                vtipus6text.setText(String.valueOf(racs.racselemek[6]));
             }
         }
     }
 
+    private void kisrajz_kepkitevo() {         
+        if (vizszintes.isSelected()) {
+           kisrajz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/statika/vizszintes.png")));
+        } else if (fuggoleges.isSelected()) {
+            kisrajz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/statika/fuggoleges.png")));
+        } else {
+            kisrajz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/statika/kettamaszu.png")));
+        }
+        kisrajz.updateUI();
+    }
+    
     private void szekcio_kepkitevo() {
         int vastag = 0;
         if (vastagvonalak.isSelected()) {
@@ -1804,10 +1928,13 @@ public class racstervezo extends javax.swing.JInternalFrame {
             racs.adatok[racs.szekcioszam][8] = Integer.parseInt(kapcsz.getText());
             racs.adatok[racs.szekcioszam][9] = Integer.parseInt(eltolasxy.getText());
             racs.adatok[racs.szekcioszam][10] = Integer.parseInt(eltolasyz.getText());
-            racs.adatok[racs.szekcioszam][11] = Integer.parseInt(konzolhossz.getText());
-            racs.adatok[racs.szekcioszam][12] = 1;
-            if (irany.isSelected()) {
+            racs.adatok[racs.szekcioszam][11] = Integer.parseInt(konzolhossz.getText());        
+            if (vizszintes.isSelected()) {
                 racs.adatok[racs.szekcioszam][12] = 2;
+            } else if (fuggoleges.isSelected()) {
+                racs.adatok[racs.szekcioszam][12] = 1;
+            } else {
+                racs.adatok[racs.szekcioszam][12] = 3;
             }
             // A Jtable-be való beleírás
             int j = tableModel.getRowCount();
@@ -1861,61 +1988,80 @@ public class racstervezo extends javax.swing.JInternalFrame {
                     // A köz sorszáma
                     racs.adatok1[racs.kozszam][11] = i;
                     racs.adatok1[racs.kozszam][0] = racs.szekcioszam;
-                    racs.adatok1[racs.kozszam][2] = (int)alsoxy;
-                    racs.adatok1[racs.kozszam][3] = (int)alsoyz;
+                    racs.adatok1[racs.kozszam][2] = (int) alsoxy;
+                    racs.adatok1[racs.kozszam][3] = (int) alsoyz;
                     adat = (Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText())) / Integer.parseInt(elemszamok.getText());
                     felsoxy = Integer.parseInt(alsoszelxy.getText()) - i * adat;
-                    racs.adatok1[racs.kozszam][4] = (int)felsoxy;
+                    racs.adatok1[racs.kozszam][4] = (int) felsoxy;
                     adat = (Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / Integer.parseInt(elemszamok.getText());
                     felsoyz = Integer.parseInt(alsoszelyz.getText()) - i * adat;
-                    racs.adatok1[racs.kozszam][5] = (int)felsoyz;
+                    racs.adatok1[racs.kozszam][5] = (int) felsoyz;
                     alsoxy = felsoxy;
                     alsoyz = felsoyz;
                     // eltolasxy
                     adat = Float.parseFloat(eltolasxy.getText()) / Float.parseFloat(elemszamok.getText());
-                    racs.adatok1[racs.kozszam][9] = (int)adat;
+                    racs.adatok1[racs.kozszam][9] = (int) adat;
                     //  eltolasyz
                     adat = Float.parseFloat(eltolasyz.getText()) / Float.parseFloat(elemszamok.getText());
-                    racs.adatok1[racs.kozszam][10] = (int)adat;
+                    racs.adatok1[racs.kozszam][10] = (int) adat;
                     racs.adatok1[racs.kozszam][12] = 1;
                     racs.adatok1[racs.kozszam][13] = 1;
-                    if (!irany.isSelected()) {
+                    if (fuggoleges.isSelected()) {
                         // A függőleges szakaszok
                         // x            
-                        adat = (Integer.parseInt(eltolasxy.getText()) / Integer.parseInt(elemszamok.getText())) ;
+                        adat = (Integer.parseInt(eltolasxy.getText()) / Integer.parseInt(elemszamok.getText()));
                         //System.out.println("adat:"+adat);
-                        adat += ((Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
+                        adat += ((Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText()))
+                                / Integer.parseInt(elemszamok.getText())) / 2;
                         //System.out.println("adat:"+adat);
                         adat = Integer.parseInt(kapcsx.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][6] = (int)adat;
+                        racs.adatok1[racs.kozszam][6] = (int) adat;
                         // y 
                         adat = Integer.parseInt(Magassag.getText()) / Integer.parseInt(elemszamok.getText());
                         adat = Integer.parseInt(kapcsy.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][7] = (int)adat;
+                        racs.adatok1[racs.kozszam][7] = (int) adat;
                         // z 
-                        adat = (Integer.parseInt(eltolasyz.getText()) / Integer.parseInt(elemszamok.getText())) ;
-                        adat += ((Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
+                        adat = (Integer.parseInt(eltolasyz.getText()) / Integer.parseInt(elemszamok.getText()));
+                        adat += ((Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText()))
+                                / Integer.parseInt(elemszamok.getText())) / 2;
                         adat = Integer.parseInt(kapcsz.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][8] = (int)adat;
-                    } else {
+                        racs.adatok1[racs.kozszam][8] = (int) adat;
+                    } else if (!vizszintes.isSelected()) {
                         // A vízszintes szakaszok
                         // x 
                         adat = Integer.parseInt(Magassag.getText()) / Integer.parseInt(elemszamok.getText());
                         adat = Integer.parseInt(kapcsx.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][6] = (int)adat;
+                        racs.adatok1[racs.kozszam][6] = (int) adat;
                         // y                                                        
-                        adat = (Integer.parseInt(eltolasxy.getText()) / Integer.parseInt(elemszamok.getText())) ;
-                        adat += ((Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
+                        adat = (Integer.parseInt(eltolasxy.getText()) / Integer.parseInt(elemszamok.getText()));
+                        adat += ((Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText())) / 2)
+                                / Integer.parseInt(elemszamok.getText());
                         adat = Integer.parseInt(kapcsy.getText()) + (i - 1) * adat;
-                        racs.adatok1[racs.kozszam][7] = (int)adat;
+                        racs.adatok1[racs.kozszam][7] = (int) adat;
                         // z                             
-                        adat = (Integer.parseInt(eltolasyz.getText()) / Integer.parseInt(elemszamok.getText())) ;
-                        adat += ((Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / Integer.parseInt(elemszamok.getText())) / 2;
-                        racs.adatok1[racs.kozszam][8] = (int)adat;
+                        adat = (Integer.parseInt(eltolasyz.getText()) / Integer.parseInt(elemszamok.getText()));
+                        adat += ((Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / 2)
+                                / Integer.parseInt(elemszamok.getText());
+                        racs.adatok1[racs.kozszam][8] = (int) adat;
+                    } else {
+                        // A kéttámaszú tartórácsok elemei
+                        // x 
+                        adat = Integer.parseInt(Magassag.getText()) / Integer.parseInt(elemszamok.getText());
+                        adat = Integer.parseInt(kapcsx.getText()) + (i - 1) * adat;
+                        racs.adatok1[racs.kozszam][6] = (int) adat;
+                        // y                                                        
+                        adat = ((Integer.parseInt(alsoszelxy.getText()) - Integer.parseInt(felsoszelxy.getText())) / 2)
+                                / Integer.parseInt(elemszamok.getText());
+                        adat = Integer.parseInt(kapcsy.getText()) + (i - 1) * adat;
+                        racs.adatok1[racs.kozszam][7] = (int) adat;
+                        // z                             
+                        adat = ((Integer.parseInt(alsoszelyz.getText()) - Integer.parseInt(felsoszelyz.getText())) / 2)
+                                / Integer.parseInt(elemszamok.getText());
+                        racs.adatok1[racs.kozszam][8] = (int) adat;
                     }
                     // A köz magassága
                     adat = Integer.parseInt(Magassag.getText()) / Integer.parseInt(elemszamok.getText());
-                    racs.adatok1[racs.kozszam][1] = (int)adat;
+                    racs.adatok1[racs.kozszam][1] = (int) adat;
                 }
             }
             // A szekciok lista feltöltése
@@ -2004,7 +2150,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
                 data[2] = String.valueOf(racs.csomopont[i][1]);  // x
                 data[3] = String.valueOf(racs.csomopont[i][2]);  // y
                 data[4] = String.valueOf(racs.csomopont[i][3]);  // z
-                tableModel.addRow(data);                
+                tableModel.addRow(data);
                 if (racs.csomopont[i][4] == 1) {
                     tableModel.setValueAt(true, k - 2, 5);
                 } else {
@@ -2157,6 +2303,8 @@ public class racstervezo extends javax.swing.JInternalFrame {
         teljes_kepkitevo();
         szekcio_kepkitevo();
         racs.mintamasolo(1, 1);
+        racselemek_kijelzo_torles();
+        racselemek_kijelzo();
     }//GEN-LAST:event_szekcio_kivalasztoActionPerformed
 
     private void ElemmodositoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ElemmodositoActionPerformed
@@ -2681,12 +2829,28 @@ public class racstervezo extends javax.swing.JInternalFrame {
         szekcio_kepkitevo();
     }//GEN-LAST:event_csomopontlista_megjeloloActionPerformed
 
+    private void vizszintesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_vizszintesStateChanged
+        // TODO add your handling code here:
+        kisrajz_kepkitevo();
+    }//GEN-LAST:event_vizszintesStateChanged
+
+    private void fuggolegesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fuggolegesStateChanged
+        // TODO add your handling code here:
+        kisrajz_kepkitevo();
+    }//GEN-LAST:event_fuggolegesStateChanged
+
+    private void kettamaszuStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_kettamaszuStateChanged
+        // TODO add your handling code here:
+        kisrajz_kepkitevo();
+    }//GEN-LAST:event_kettamaszuStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Elemmodosito;
     private javax.swing.JTextField Magassag;
     private javax.swing.JButton Szelveny_hozzarendelo;
     private javax.swing.JTextField alsoszelxy;
     private javax.swing.JTextField alsoszelyz;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTable csomopontlista;
     private javax.swing.JButton csomopontlista_megjelolo;
     private javax.swing.JTextField csomopontszam;
@@ -2714,7 +2878,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JTextField ftipus7text;
     private javax.swing.JSlider ftipus8;
     private javax.swing.JTextField ftipus8text;
-    private javax.swing.JRadioButton irany;
+    private javax.swing.JRadioButton fuggoleges;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2787,7 +2951,8 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JTextField kapcsx;
     private javax.swing.JTextField kapcsy;
     private javax.swing.JTextField kapcsz;
-    private javax.swing.JRadioButton keresni;
+    private javax.swing.JRadioButton kettamaszu;
+    private javax.swing.JLabel kisrajz;
     private javax.swing.JTextField konzolhossz;
     private javax.swing.JButton kozkivalaszto;
     private javax.swing.JComboBox kozok;
@@ -2817,6 +2982,7 @@ public class racstervezo extends javax.swing.JInternalFrame {
     private javax.swing.JButton ujelem;
     private javax.swing.JTextField ujelemnev;
     private javax.swing.JRadioButton vastagvonalak;
+    private javax.swing.JRadioButton vizszintes;
     private javax.swing.JSlider vtipus1;
     private javax.swing.JTextField vtipus1text;
     private javax.swing.JSlider vtipus2;

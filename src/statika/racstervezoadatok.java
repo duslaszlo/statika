@@ -495,9 +495,12 @@ public class racstervezoadatok {
             pont[1] = kezdx;
             pont[3] = kezdx + alsoxy;
             pont[2] = (pont[1] + pont[3]) / 2;
-            pont[4] = kezdx + (alsoxy - felsoxy) / 2 + eltxy;
-            pont[6] = kezdx + alsoxy - (alsoxy - felsoxy) / 2 + eltxy;
+            pont[4] = kezdx + (alsoxy - felsoxy) / 2;
+            pont[6] = kezdx + alsoxy - (alsoxy - felsoxy) / 2;
+            /*pont[4] = kezdx + (alsoxy - felsoxy) / 2 + eltxy/2;
+             pont[6] = kezdx + alsoxy - (alsoxy - felsoxy) / 2 + eltxy/2;*/
             pont[5] = (pont[4] + pont[6]) / 2;
+            //System.out.println("szekcio:" + szekcio+ "  pont1:" + pont[1]+ "  pont2:" + pont[2]+ "  pont3:" + pont[3]+ "  pont4:" + pont[4]+ "  pont5:" + pont[5]+ "  pont6:" + pont[6]);
             for (int i = 1; i <= mintaindexf; i++) {
                 if (mintacspfjelleg[i][0] != 3) {
                     tempcsp[i][0] = pont[mintacspfjelleg[i][2]]
@@ -515,8 +518,10 @@ public class racstervezoadatok {
             pont[1] = kezdz;
             pont[3] = kezdz + alsoyz;
             pont[2] = (pont[1] + pont[3]) / 2;
-            pont[4] = kezdz + (alsoyz - felsoyz) / 2 + eltyz;
-            pont[6] = kezdz + alsoyz - (alsoyz - felsoyz) / 2 + eltyz;
+            pont[4] = kezdz + (alsoyz - felsoyz) / 2;
+            pont[6] = kezdz + alsoyz - (alsoyz - felsoyz) / 2;
+            /*pont[4] = kezdz + (alsoyz - felsoyz) / 2 + eltyz;
+             pont[6] = kezdz + alsoyz - (alsoyz - felsoyz) / 2 + eltyz;*/
             pont[5] = (pont[4] + pont[6]) / 2;
             for (int i = 1; i <= mintaindexf; i++) {
                 if (mintacspfjelleg[i][1] != 3) {
@@ -546,10 +551,12 @@ public class racstervezoadatok {
             tempcsp[2][1] = tempcsp[1][1];
             tempcsp[3][1] = kezdy + alsoxy;
             tempcsp[4][1] = tempcsp[3][1];
-            tempcsp[5][1] = kezdy + eltxy;
+
+            tempcsp[5][1] = kezdy + ((alsoxy - felsoxy) / 2) + eltxy;
             tempcsp[6][1] = tempcsp[5][1];
-            tempcsp[7][1] = kezdy + felsoxy + eltxy;
+            tempcsp[7][1] = kezdy + ((alsoxy - felsoxy) / 2) + felsoxy + eltxy;
             tempcsp[8][1] = tempcsp[7][1];
+
             tempcsp[10][1] = (tempcsp[1][1] + tempcsp[5][1]) / 2;
             tempcsp[12][1] = tempcsp[10][1];
             tempcsp[9][1] = ((tempcsp[1][1] + tempcsp[3][1]) / 2 + (tempcsp[7][1] + tempcsp[5][1]) / 2) / 2;
@@ -573,7 +580,7 @@ public class racstervezoadatok {
              for (int i = 1; i <= 13; i++) {
              System.out.println("i:" + i + "  x:" + tempcsp[i][0] + " y:" + tempcsp[i][1] + " z:" + tempcsp[i][2]);
              }
-             System.out.println();*/
+             System.out.println(); */
         }
     }
 
@@ -794,7 +801,7 @@ public class racstervezoadatok {
             } else {
                 // A szekciórajz
                 if (rud[i][5] == koz) {
-                    szinek[i] = Color.BLUE;
+                    szinek[i] = Color.blue;
                 }
             }
             // A vonalvastagságok
@@ -816,7 +823,7 @@ public class racstervezoadatok {
             } else {
                 g1.setStroke(vonal[i]);
                 g1.setColor(szinek[i]);
-                if (rud[i][4] == 1)  {
+                if (rud[i][4] == 1) {
                     vonal[i] = new BasicStroke(2);
                     g1.setColor(Color.red);
                 }
@@ -862,21 +869,21 @@ public class racstervezoadatok {
                     g1.drawLine(xx1, yy1, xx2, yy2);
                     if (vastagvonal == 0) {
                         g1.fillOval(xx1 - 2, yy1 - 2, 4, 4);
-                        g1.setColor(Color.magenta);                        
+                        g1.setColor(Color.magenta);
                         g1.setFont(Courier10);
                         g1.drawString(String.valueOf(rud[i][1]), xx1 + 3, yy1);
-                        g1.drawString(String.valueOf(rud[i][2]), xx2 + 3, yy2);                                                
+                        g1.drawString(String.valueOf(rud[i][2]), xx2 + 3, yy2);
                     } else {
-                        if (csomopont[rud[i][1]][4]==1) {
+                        if (csomopont[rud[i][1]][4] == 1) {
                             g1.setColor(Color.red);
                             g1.setFont(Courier24b);
-                            g1.drawString(String.valueOf(rud[i][1]+1), xx1 + 5, yy1);
+                            g1.drawString(String.valueOf(rud[i][1] + 1), xx1 + 5, yy1);
                         }
-                        if (csomopont[rud[i][2]][4]==1) {
+                        if (csomopont[rud[i][2]][4] == 1) {
                             g1.setColor(Color.red);
                             g1.setFont(Courier24b);
-                            g1.drawString(String.valueOf(rud[i][2]+1), xx2 + 5, yy2);
-                        }                        
+                            g1.drawString(String.valueOf(rud[i][2] + 1), xx2 + 5, yy2);
+                        }
                     }
                 }
             }
