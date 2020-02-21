@@ -4,12 +4,13 @@
  */
 package statika;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import Hibernate.HibernateUtil;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.hibernate.Session;
 
 /**
  *
@@ -20,30 +21,28 @@ public class drotvaz extends javax.swing.JInternalFrame {
     /**
      * Creates new form drotvaz
      */
-    int UpdateQuery;
     drotvazadatok vaz = new drotvazadatok();
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    String parancs;
 
     public drotvaz() {
         initComponents();
-        drotvazak.removeAllItems();
-        drotvazak.addItem("Válassz");
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            vaz.co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            vaz.st = vaz.co.createStatement();
-            // A projekt nevének a beolvasása
-            vaz.parancs = "SELECT distinct azonosito FROM rud order by azonosito;";
-            vaz.rs = vaz.st.executeQuery(vaz.parancs);
-            while (vaz.rs.next()) {
-                drotvazak.addItem(vaz.rs.getString(1));
-            }
-            vaz.rs.close();
-            vaz.st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+        // A jComboBox1 feltöltése
+        session.beginTransaction();
+        parancs = "Select distinct projekt FROM Rud";
+        //System.out.println(parancs);
+        List<String> rud = session.createQuery(parancs).list();
+        for (int i = 0; i < rud.size(); i++) {
+            projekt_lista.addItem(rud.get(i));
         }
+        parancs = "Select distinct azonosito FROM Rud Where projekt = '" + rud.get(0) + "' order by azonosito";
+        //System.out.println(parancs);
+        List<String> rudlist = session.createQuery(parancs).list();
+        for (int i = 0; i < rudlist.size(); i++) {
+            drotvazak.addItem(rudlist.get(i));
+        }
+        session.getTransaction().commit();
+        session.close();
     }
 
     /**
@@ -66,6 +65,14 @@ public class drotvaz extends javax.swing.JInternalFrame {
         rudak = new javax.swing.JTable();
         rudkivalaszto = new javax.swing.JButton();
         pngkep = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        projekt_lista = new javax.swing.JComboBox();
+        projekt_kivalaszto = new javax.swing.JButton();
+        Kodosito = new javax.swing.JToggleButton();
+        vastagvonalak = new javax.swing.JToggleButton();
+        jSlider1 = new javax.swing.JSlider();
+        jLabel3 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -100,7 +107,7 @@ public class drotvaz extends javax.swing.JInternalFrame {
             }
         });
 
-        drotvaz_kivalaszt.setText("Kiválaszt");
+        drotvaz_kivalaszt.setText("Lássuk");
         drotvaz_kivalaszt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drotvaz_kivalasztActionPerformed(evt);
@@ -156,51 +163,130 @@ public class drotvaz extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel2.setText("Projekt:");
+
+        projekt_kivalaszto.setText("Kiválaszt");
+        projekt_kivalaszto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                projekt_kivalasztoActionPerformed(evt);
+            }
+        });
+
+        Kodosito.setText("Ködös rajz");
+        Kodosito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                KodositoActionPerformed(evt);
+            }
+        });
+
+        vastagvonalak.setText("Vastag vonal");
+        vastagvonalak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                vastagvonalakActionPerformed(evt);
+            }
+        });
+
+        jSlider1.setMaximum(1000);
+        jSlider1.setMinimum(1);
+        jSlider1.setValue(100);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel3.setText("Eltolás");
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/statika/exit1.png"))); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(drotvazak, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(drotvaz_kivalaszt)
-                        .addGap(71, 71, 71)
-                        .addComponent(alaphelyzet)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(14, 14, 14)
+                                .addComponent(projekt_lista, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(drotvazak, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
-                        .addComponent(pngkep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(rudkivalaszto)
-                        .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(drotvaz_kivalaszt, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(projekt_kivalaszto, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(Kodosito, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(alaphelyzet, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(vastagvonalak, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pngkep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(nezet, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(34, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(rudkivalaszto))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(drotvazak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(drotvaz_kivalaszt)
-                    .addComponent(alaphelyzet)
-                    .addComponent(pngkep))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel3)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(501, 501, 501)
-                        .addComponent(rudkivalaszto))
-                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel2)
+                                    .addComponent(projekt_lista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(projekt_kivalaszto))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(drotvazak, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1)
+                                    .addComponent(drotvaz_kivalaszt))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(nezet, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(alaphelyzet)
+                                            .addComponent(pngkep))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(Kodosito)
+                                            .addComponent(vastagvonalak)))
+                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(nezet, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(19, Short.MAX_VALUE))
+                            .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rudkivalaszto))))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -223,13 +309,13 @@ public class drotvaz extends javax.swing.JInternalFrame {
         for (int k = 0; k < j; k++) {
             tableModel.removeRow(0);
         }
-        for (int i = 1; i <= vaz.rudindex; i++) {
+        for (int i = 1; i <= vaz.rud.size(); i++) {
             String[] data = new String[3];
-            data[0] = String.valueOf(vaz.rud[i][1]);
-            data[1] = String.valueOf(vaz.rud[i][2]);
-            data[2] = String.valueOf(vaz.rudnev[i]);
+            data[0] = String.valueOf(vaz.rud.get(i - 1).getKezdocsp());
+            data[1] = String.valueOf(vaz.rud.get(i - 1).getVegecsp());
+            data[2] = vaz.rud.get(i - 1).getSzelveny();
             tableModel.addRow(data);
-            if (vaz.rud[i][4] == 1) {
+            if (vaz.rud.get(i - 1).getKek() == 1) {
                 tableModel.setValueAt(true, i - 1, 3);
             } else {
                 tableModel.setValueAt(false, i - 1, 3);
@@ -253,12 +339,12 @@ public class drotvaz extends javax.swing.JInternalFrame {
     private void rudkivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rudkivalasztoActionPerformed
         // TODO add your handling code here:
         DefaultTableModel tableModel = (DefaultTableModel) rudak.getModel();
-        for (int i = 0; i < vaz.rudindex; i++) {
+        for (int i = 0; i < vaz.rud.size(); i++) {
             //System.out.println(" javítva:" + tableModel.getValueAt(i, 3).toString());
             if (tableModel.getValueAt(i, 3).toString().equals("true")) {
-                vaz.rud[i][4] = 1;
+                vaz.rud.get(i).setAnyag(1);
             } else {
-                vaz.rud[i][4] = 0;
+                vaz.rud.get(i).setAnyag(0);
             }
         }
         kepkitevo();
@@ -363,17 +449,69 @@ public class drotvaz extends javax.swing.JInternalFrame {
         }
         kepkitevo();
     }//GEN-LAST:event_nezetMouseWheelMoved
+
+    private void projekt_kivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projekt_kivalasztoActionPerformed
+        // TODO add your handling code here:
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        drotvazak.removeAllItems();
+        drotvazak.addItem("Válassz");
+        session.beginTransaction();
+        parancs = "Select distinct azonosito FROM Rud Where projekt = '" + projekt_lista.getSelectedItem() + "' order by azonosito";
+        //System.out.println(parancs);
+        List<String> rud = session.createQuery(parancs).list();
+        for (int i = 0; i < rud.size(); i++) {
+            drotvazak.addItem(rud.get(i));
+        }
+        session.getTransaction().commit();
+        session.close();
+    }//GEN-LAST:event_projekt_kivalasztoActionPerformed
+
+    private void KodositoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KodositoActionPerformed
+        // TODO add your handling code here:
+        if (Kodosito.isSelected()) {
+            Kodosito.setText("Normál rajz");
+        } else {
+            Kodosito.setText("Ködös rajz");
+        }
+        vaz.rajztipus = !vaz.rajztipus;
+        kepkitevo();
+    }//GEN-LAST:event_KodositoActionPerformed
+
+    private void vastagvonalakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vastagvonalakActionPerformed
+        // TODO add your handling code here:
+        if (vastagvonalak.isSelected()) {
+            vastagvonalak.setText("Vékony vonal");
+        } else {
+            vastagvonalak.setText("Vastag vonal");
+        }
+        vaz.vastagvonal = !vaz.vastagvonal;
+        kepkitevo();
+    }//GEN-LAST:event_vastagvonalakActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton Kodosito;
     private javax.swing.JButton alaphelyzet;
     private javax.swing.JButton drotvaz_kivalaszt;
     private javax.swing.JComboBox drotvazak;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSlider jSlider1;
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel nezet;
     private javax.swing.JButton pngkep;
+    private javax.swing.JButton projekt_kivalaszto;
+    private javax.swing.JComboBox projekt_lista;
     private javax.swing.JTable rudak;
     private javax.swing.JButton rudkivalaszto;
+    private javax.swing.JToggleButton vastagvonalak;
     // End of variables declaration//GEN-END:variables
 }

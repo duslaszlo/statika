@@ -10,9 +10,18 @@
  */
 package statika;
 
-import java.sql.*;
+import Entities.Projectek;
+import Entities.Szelveny;
+import Entities.Tartoerok;
+import Entities.Tartok;
+import Hibernate.HibernateUtil;
+import java.util.Date;
+import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  *
@@ -21,71 +30,55 @@ import javax.swing.table.DefaultTableModel;
 public class kettamaszu extends javax.swing.JInternalFrame {
 // A változók deklarálása
 
-    static Connection co;
-    static Statement st;
-    static ResultSet rs;
     tartoadatok tarto = new tartoadatok();
+    Query query;
+    Date now = new Date();
+    Session session = HibernateUtil.getSessionFactory().openSession();
 
     /**
      * Creates new form kettamaszu
      */
     public kettamaszu() {
 
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A projekt nevének a beolvasása
-            rs = st.executeQuery("SELECT projekt FROM projectek where aktiv = '1'");
-            while (rs.next()) {
-                tarto.ProjektNev = rs.getString(1);
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        //System.out.println("Az aktuális projekt: " + tarto.ProjektNev);
         initComponents();
-        projekt.setText(tarto.ProjektNev);
-        // A jComboBox1 feltöltése
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A projekt nevének a beolvasása
-            tarto.parancs = "SELECT tartonev FROM tartok where projekt = '";
-            tarto.parancs = tarto.parancs + tarto.ProjektNev + "';";
-            rs = st.executeQuery(tarto.parancs);
-            while (rs.next()) {
-                jComboBox1.addItem(rs.getString(1));
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+        session.beginTransaction();
+        jTabbedPane1.setEnabled(false);
+        feszultsegek.setEnabled(false);
+        ero_nyomatek.setEnabled(false);
+        alakvaltozas.setEnabled(false);
+        tarto.parancs = "FROM Projectek";
+        //System.out.println(parancs);
+        List<Projectek> projectek = session.createQuery(tarto.parancs).list();
+        for (int i = 0; i < projectek.size(); i++) {
+            projekt.addItem(projectek.get(i).getProjekt());
+        }
+        tarto.parancs = "FROM Projectek Where aktiv = '1'";
+        //System.out.println(parancs);
+        List<Projectek> project = session.createQuery(tarto.parancs).list();
+        for (int i = 0; i < project.size(); i++) {
+            tarto.ProjektNev = project.get(i).getProjekt();
+            projekt.setSelectedItem(project.get(i).getProjekt());
+        }
+       
+        //System.out.println("Az aktuális projekt: " + tarto.ProjektNev);
+        // A tartónevek (jComboBox1) feltöltése        
+        tarto.parancs = "FROM Tartok where projekt = '" + tarto.ProjektNev + "'";
+        //System.out.println(parancs);
+        List<Tartok> tartonevlista = session.createQuery(tarto.parancs).list();
+        for (int i = 0; i < tartonevlista.size(); i++) {
+            tartonevek_lista.addItem(tartonevlista.get(i).getTartonev());
         }
         // A szelvények feltöltése
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
+        tarto.parancs = "FROM Szelveny order by nev";
+        //System.out.println(parancs);
+        List<Szelveny> szelvenylista = session.createQuery(tarto.parancs).list();
+        szelvenyek_listaja.addItem("Válassz");
+        for (int i = 0; i < szelvenylista.size(); i++) {
             // A szelvénytár beolvasása
-            rs = st.executeQuery("SELECT nev FROM szelveny where megnevezes <> 'Összetett szelvény' order by nev ");
-            while (rs.next()) {
-                szelveny.addItem(rs.getString(1));
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+            szelvenyek_listaja.addItem(szelvenylista.get(i).getNev());
         }
+        session.getTransaction().commit();
+        session.close();
     }
 
     /**
@@ -97,58 +90,67 @@ public class kettamaszu extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        TartoHossz = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        erok = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        terhelesek = new javax.swing.JTable();
-        jLabel4 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        nyomatekok = new javax.swing.JTable();
+        Rajzmód = new javax.swing.ButtonGroup();
         jLabel5 = new javax.swing.JLabel();
-        Ero_hozzaadas = new javax.swing.JButton();
-        Megoszlo_hozzaadas = new javax.swing.JButton();
-        Nyomatek_hozzaadas = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox();
-        projekt = new javax.swing.JTextField();
+        tartonevek_lista = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
-        konzol1 = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        tarto_kivalasztas = new javax.swing.JButton();
+        pngrajz = new javax.swing.JLabel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel26 = new javax.swing.JLabel();
+        szelvenyek_listaja = new javax.swing.JComboBox();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         konzol2 = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        konzol1 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        TartoHossz = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        tartoadat_modositas = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        reszletesadatok = new javax.swing.JTable();
+        metszet_jelolo = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        erok_modositasa = new javax.swing.JButton();
+        Ero_hozzaadas = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
         ujero = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         ujerohely = new javax.swing.JTextField();
-        ujmegoszlohossz = new javax.swing.JTextField();
-        ujmegoszlohely = new javax.swing.JTextField();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        erok = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        terhek_modositasa = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        terhelesek = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         ujmegoszlo = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        ujmegoszlohely = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        ujmegoszlohossz = new javax.swing.JTextField();
+        Megoszlo_hozzaadas = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        nyomatekok_modositasa = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        nyomatekok = new javax.swing.JTable();
         jLabel22 = new javax.swing.JLabel();
         ujnyomatek = new javax.swing.JTextField();
         jLabel23 = new javax.swing.JLabel();
         ujnyomatekhely = new javax.swing.JTextField();
-        jSeparator1 = new javax.swing.JSeparator();
-        jSeparator2 = new javax.swing.JSeparator();
-        jLabel26 = new javax.swing.JLabel();
-        jLabel27 = new javax.swing.JLabel();
-        profil = new javax.swing.JTextField();
-        szelveny = new javax.swing.JComboBox();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        pngrajz = new javax.swing.JLabel();
+        Nyomatek_hozzaadas = new javax.swing.JButton();
+        project_valtoztatas = new javax.swing.JButton();
+        projekt = new javax.swing.JComboBox();
+        feszultsegek = new javax.swing.JCheckBox();
+        alakvaltozas = new javax.swing.JCheckBox();
+        ero_nyomatek = new javax.swing.JCheckBox();
+        Kilepes = new javax.swing.JButton();
 
         setClosable(true);
         setForeground(java.awt.Color.white);
@@ -156,19 +158,173 @@ public class kettamaszu extends javax.swing.JInternalFrame {
         setMaximizable(true);
         setResizable(true);
         setTitle("Kéttámaszú tartó nyíróerő, nyomatéki és lehajlási ábrái");
-        setLayer(1);
-        setPreferredSize(new java.awt.Dimension(1200, 700));
+        setPreferredSize(new java.awt.Dimension(1200, 600));
 
-        TartoHossz.addActionListener(new java.awt.event.ActionListener() {
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel5.setText("A tartó neve:");
+
+        tartonevek_lista.setMaximumRowCount(4);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel6.setText("Projektnév:");
+
+        tarto_kivalasztas.setText("Tartó kiválasztás");
+        tarto_kivalasztas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TartoHosszActionPerformed(evt);
+                tarto_kivalasztasActionPerformed(evt);
             }
         });
 
+        jLabel26.setText("Szelvény:");
+
+        jLabel9.setText("Konzol2:");
+
+        jLabel11.setText("cm");
+
+        jLabel10.setText("cm");
+
+        jLabel8.setText("Konzol1:");
+
         jLabel1.setText("Tartóhossz:");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel2.setText("Erők (kN és cm):");
+        jLabel7.setText("cm");
+
+        tartoadat_modositas.setText("Módosít");
+        tartoadat_modositas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tartoadat_modositasActionPerformed(evt);
+            }
+        });
+
+        reszletesadatok.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "Hely (cm)", "T (KN)", "M (KNcm)", "Szigma (KN/cm2)", "Tau (KN/cm2)", "Összetett (KN/cm2)", "Lehajlas (cm)", "Szögfordulás (fok)", "A (cm2)", "Ix (cm4)", "Sx (cm3)", "v (cm)", "Kx (cm3)", "Megjelölés"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane4.setViewportView(reszletesadatok);
+
+        metszet_jelolo.setText("Megjelöl");
+        metszet_jelolo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                metszet_jeloloActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(TartoHossz, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                            .addComponent(konzol1))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(konzol2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(szelvenyek_listaja, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel26))
+                        .addGap(24, 24, 24))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(tartoadat_modositas, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(metszet_jelolo, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(24, 24, 24))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(TartoHossz)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(szelvenyek_listaja, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tartoadat_modositas))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(konzol1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(konzol2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel11))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(metszet_jelolo)
+                .addGap(30, 30, 30))
+        );
+
+        jTabbedPane1.addTab("Tartóadatok", jPanel1);
+
+        erok_modositasa.setText("Módosít");
+        erok_modositasa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                erok_modositasaActionPerformed(evt);
+            }
+        });
+
+        Ero_hozzaadas.setText("Hozzáad");
+        Ero_hozzaadas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Ero_hozzaadasActionPerformed(evt);
+            }
+        });
+
+        jLabel12.setText("Új erő:");
+
+        jLabel14.setText("Hely:");
 
         erok.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -194,19 +350,67 @@ public class kettamaszu extends javax.swing.JInternalFrame {
             }
         });
         erok.setShowHorizontalLines(false);
-        erok.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                erokAncestorAdded(evt);
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
         jScrollPane1.setViewportView(erok);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel3.setText("Megoszlók (kN/cm  és cm):");
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel2.setText("Erők (kN és cm):");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(erok_modositasa, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel14)
+                                .addGap(12, 12, 12)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(ujerohely)
+                            .addComponent(ujero, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Ero_hozzaadas, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(erok_modositasa)
+                .addGap(40, 40, 40)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ujero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(ujerohely, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Ero_hozzaadas, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(36, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Terhelő erők", jPanel2);
+
+        terhek_modositasa.setText("Módosít");
+        terhek_modositasa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                terhek_modositasaActionPerformed(evt);
+            }
+        });
 
         terhelesek.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -233,8 +437,94 @@ public class kettamaszu extends javax.swing.JInternalFrame {
         });
         jScrollPane2.setViewportView(terhelesek);
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel3.setText("Megoszló terhek (kN/cm  és cm):");
+
+        jLabel20.setText("Új teher:");
+
+        jLabel19.setText("Hely:");
+
+        jLabel18.setText("Hossz:");
+
+        Megoszlo_hozzaadas.setText("Hozzáad");
+        Megoszlo_hozzaadas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Megoszlo_hozzaadasActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(terhek_modositasa, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                    .addComponent(jLabel18)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(ujmegoszlohossz, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel20, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                            .addComponent(jLabel19)
+                                            .addGap(22, 22, 22)))
+                                    .addGap(3, 3, 3)
+                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(ujmegoszlo, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                                        .addComponent(ujmegoszlohely))))
+                            .addGap(177, 177, 177)
+                            .addComponent(Megoszlo_hozzaadas, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 29, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ujmegoszlo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel20))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
+                            .addComponent(ujmegoszlohely)
+                            .addComponent(jLabel19))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel18)
+                            .addComponent(ujmegoszlohossz, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(42, 42, 42))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(terhek_modositasa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Megoszlo_hozzaadas)
+                        .addGap(30, 30, 30))))
+        );
+
+        jTabbedPane1.addTab("Megoszló terhek", jPanel3);
+
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel4.setText("Nyomatékok (kNcm és cm):");
+
+        nyomatekok_modositasa.setText("Módosít");
+        nyomatekok_modositasa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nyomatekok_modositasaActionPerformed(evt);
+            }
+        });
 
         nyomatekok.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -261,22 +551,9 @@ public class kettamaszu extends javax.swing.JInternalFrame {
         });
         jScrollPane3.setViewportView(nyomatekok);
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel5.setText("A tartó neve:");
+        jLabel22.setText("Új nyomaték:");
 
-        Ero_hozzaadas.setText("Hozzáad");
-        Ero_hozzaadas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Ero_hozzaadasActionPerformed(evt);
-            }
-        });
-
-        Megoszlo_hozzaadas.setText("Hozzáad");
-        Megoszlo_hozzaadas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Megoszlo_hozzaadasActionPerformed(evt);
-            }
-        });
+        jLabel23.setText("Hely:");
 
         Nyomatek_hozzaadas.setText("Hozzáad");
         Nyomatek_hozzaadas.addActionListener(new java.awt.event.ActionListener() {
@@ -285,82 +562,100 @@ public class kettamaszu extends javax.swing.JInternalFrame {
             }
         });
 
-        jComboBox1.setMaximumRowCount(4);
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(nyomatekok_modositasa, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel22)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(27, 27, 27)
+                                .addComponent(jLabel23)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(ujnyomatekhely)
+                            .addComponent(ujnyomatek, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 186, Short.MAX_VALUE)
+                        .addComponent(Nyomatek_hozzaadas, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
+            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 190, Short.MAX_VALUE)
+                .addComponent(nyomatekok_modositasa)
+                .addGap(66, 66, 66)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ujnyomatek, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel22))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ujnyomatekhely, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel23)
+                    .addComponent(Nyomatek_hozzaadas))
+                .addGap(21, 21, 21))
+            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGap(36, 36, 36)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(161, Short.MAX_VALUE)))
+        );
 
-        projekt.setEditable(false);
-        projekt.setFont(new java.awt.Font("Courier New", 1, 11)); // NOI18N
-        projekt.setText("Projektnév");
+        jTabbedPane1.addTab("Nyomatékok", jPanel4);
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel6.setText("Projektnév:");
-
-        jButton4.setText("Tartó kiválasztás");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        project_valtoztatas.setText("Másik projekt");
+        project_valtoztatas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                project_valtoztatasActionPerformed(evt);
             }
         });
 
-        jLabel7.setText("cm");
-
-        jLabel8.setText("Konzol1:");
-
-        jLabel9.setText("Konzol2:");
-
-        jLabel10.setText("cm");
-
-        jLabel11.setText("cm");
-
-        jButton5.setText("Módosít");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        Rajzmód.add(feszultsegek);
+        feszultsegek.setText("Feszültségek");
+        feszultsegek.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                feszultsegekActionPerformed(evt);
             }
         });
 
-        jButton6.setText("Módosít");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        Rajzmód.add(alakvaltozas);
+        alakvaltozas.setText("Alakváltozás");
+        alakvaltozas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                alakvaltozasActionPerformed(evt);
             }
         });
 
-        jButton7.setText("Módosít");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        Rajzmód.add(ero_nyomatek);
+        ero_nyomatek.setSelected(true);
+        ero_nyomatek.setText("Erő/Nyomaték");
+        ero_nyomatek.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                ero_nyomatekActionPerformed(evt);
             }
         });
 
-        jLabel12.setText("Új erő:");
-
-        jLabel14.setText("Hely:");
-
-        jLabel18.setText("Hossz:");
-
-        jLabel19.setText("Hely:");
-
-        jLabel20.setText("Új teher:");
-
-        jLabel22.setText("Új nyomaték:");
-
-        jLabel23.setText("Hely:");
-
-        jLabel26.setText("Szelvény:");
-
-        jLabel27.setText("Profilok:");
-
-        jButton8.setText("Módosít");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        Kilepes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/statika/exit1.png"))); // NOI18N
+        Kilepes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
-            }
-        });
-
-        jButton9.setText("Új szelvény");
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
+                KilepesActionPerformed(evt);
             }
         });
 
@@ -369,481 +664,370 @@ public class kettamaszu extends javax.swing.JInternalFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(16, 16, 16))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
-                                    .addGap(20, 20, 20)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel26)
-                                .addGap(18, 18, 18)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(projekt)
-                            .addComponent(profil, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(TartoHossz, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(konzol1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jLabel9)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(konzol2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jLabel11)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jButton8))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addGap(219, 219, 219)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ero_nyomatek))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(7, 7, 7)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(10, 10, 10)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(projekt, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(project_valtoztatas))
+                                    .addComponent(tartonevek_lista, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox1, 0, 285, Short.MAX_VALUE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(pngrajz, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)))
+                                .addComponent(feszultsegek)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(alakvaltozas)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(tarto_kivalasztas))))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 437, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel20)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ujmegoszlo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(55, 55, 55)
-                                .addComponent(jLabel19)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ujmegoszlohely, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addComponent(jLabel18)
-                                .addGap(2, 2, 2)
-                                .addComponent(ujmegoszlohossz, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(Megoszlo_hozzaadas, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane3)
-                    .addComponent(jScrollPane2)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel12)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ujero, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ujerohely, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(126, 126, 126)
-                        .addComponent(Ero_hozzaadas, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(jLabel27)
-                        .addGap(11, 11, 11)
-                        .addComponent(szelveny, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(118, 118, 118)
-                        .addComponent(jLabel22)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                        .addComponent(ujnyomatek, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(47, 47, 47)
-                        .addComponent(jLabel23)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(ujnyomatekhely, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                        .addComponent(Nyomatek_hozzaadas, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(pngrajz, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(Kilepes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pngrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel27)
-                            .addComponent(szelveny)
-                            .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jButton7))
-                        .addGap(4, 4, 4)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Ero_hozzaadas, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(ujerohely, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(ujero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel12)
-                                .addComponent(jLabel14)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jButton6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(ujmegoszlohely)
-                                .addComponent(jLabel19)
-                                .addComponent(ujmegoszlohossz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel18)
-                                .addComponent(Megoszlo_hozzaadas))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(ujmegoszlo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel20)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jButton5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel23)
-                            .addComponent(ujnyomatek, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel22)
-                            .addComponent(ujnyomatekhely, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Nyomatek_hozzaadas)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(projekt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(project_valtoztatas)
+                            .addComponent(projekt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(profil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(10, 10, 10)
+                            .addComponent(jLabel5)
+                            .addComponent(tartonevek_lista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(konzol1)
-                                .addComponent(jLabel10))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(TartoHossz)
-                                .addComponent(jLabel7)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(konzol2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel11)
-                                .addComponent(jLabel9)
-                                .addComponent(jButton8))
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(tarto_kivalasztas))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(ero_nyomatek)
+                                    .addComponent(feszultsegek)
+                                    .addComponent(alakvaltozas))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(pngrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Kilepes, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void TartoHosszActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TartoHosszActionPerformed
-        // TODO add your handling code here:        
-        /*
-         tarto.megnevezes = "MDI tartó ver1 – tartó5";
-         tarto.beolvas();*/
-        tarto.hossz = Float.parseFloat(TartoHossz.getText());
-        System.out.println(tarto.hossz);
-    }//GEN-LAST:event_TartoHosszActionPerformed
+    private void reszletesadatok_tablatorlo() {
+        DefaultTableModel tableModel = (DefaultTableModel) reszletesadatok.getModel();
+        int i = tableModel.getRowCount();
+        if (i > 0) {
+            for (int k = 0; k < i; k++) {
+                tableModel.removeRow(0);
+            }
+        }
+    }
+
+    private void reszletesadatok_tablatolto() {
+        DefaultTableModel tableModel = (DefaultTableModel) reszletesadatok.getModel();
+        reszletesadatok_tablatorlo();
+        for (int i = 0; i < tarto.metszekszam; i++) {
+            String[] data = new String[15];
+            data[0] = String.valueOf(i);                        // Sorszám
+            data[1] = String.valueOf((i * (tarto.tarto.get(0).getHossz() + tarto.tarto.get(0).getKonzol1() + tarto.tarto.get(0).getKonzol2())) / tarto.metszekszam);    // A metszéki hely
+            data[2] = String.valueOf(tarto.metszekek.get(i).getNyiroero());    // Nyíróerő            
+            data[3] = String.valueOf(tarto.metszekek.get(i).getNyomatek());    // Nyomaték
+            data[4] = String.valueOf(tarto.metszekek.get(i).getSzigma());    // Szigma
+            data[5] = String.valueOf(tarto.metszekek.get(i).getTau());    // Tau
+            data[6] = String.valueOf(tarto.metszekek.get(i).getOsszehasonlito_szigma());    // Összetett feszültség
+            data[7] = String.valueOf(tarto.metszekek.get(i).getLehajlas());    // Lehajlás
+            data[8] = String.valueOf(tarto.metszekek.get(i).getSzogfordulas());    // Szögfordulás
+            data[9] = String.valueOf(tarto.metszekek.get(i).getA());    // Terület (A)
+            data[10] = String.valueOf(tarto.metszekek.get(i).getIx());    // Inercia (Ix)
+            data[11] = String.valueOf(tarto.metszekek.get(i).getSx());    // Statikai nyomaték (Sx)
+            data[12] = String.valueOf(tarto.metszekek.get(i).getV());    // Gerincvastagság
+            data[13] = String.valueOf(tarto.metszekek.get(i).getKx());    // Keresztmetszeti jellemző (Kx)            
+            tableModel.addRow(data);
+            if (tarto.metszekek.get(i).getKijelzes() == 1) {
+                tableModel.setValueAt(true, i, 14);
+            } else {
+                tableModel.setValueAt(false, i, 14);
+            }
+        }
+        // Az oszlop adatainak középre igazítása
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(TartoHossz.CENTER);
+        for (int i = 0; i < 15; i++) {
+            reszletesadatok.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+        // A tábla oszlopszélességei
+        reszletesadatok.setAutoResizeMode(reszletesadatok.AUTO_RESIZE_OFF);
+        reszletesadatok.getColumnModel().getColumn(0).setPreferredWidth(30);
+        reszletesadatok.getColumnModel().getColumn(1).setPreferredWidth(40);
+        reszletesadatok.getColumnModel().getColumn(2).setPreferredWidth(45);
+        reszletesadatok.getColumnModel().getColumn(3).setPreferredWidth(45);
+        reszletesadatok.getColumnModel().getColumn(4).setPreferredWidth(60);
+        reszletesadatok.getColumnModel().getColumn(5).setPreferredWidth(60);
+        reszletesadatok.getColumnModel().getColumn(6).setPreferredWidth(60);
+        reszletesadatok.getColumnModel().getColumn(7).setPreferredWidth(50);
+        reszletesadatok.getColumnModel().getColumn(8).setPreferredWidth(50);
+        reszletesadatok.getColumnModel().getColumn(9).setPreferredWidth(40);
+        reszletesadatok.getColumnModel().getColumn(10).setPreferredWidth(40);
+        reszletesadatok.getColumnModel().getColumn(11).setPreferredWidth(40);
+        reszletesadatok.getColumnModel().getColumn(12).setPreferredWidth(40);
+        reszletesadatok.getColumnModel().getColumn(13).setPreferredWidth(40);
+        reszletesadatok.getColumnModel().getColumn(14).setPreferredWidth(50);
+        reszletesadatok.setModel(tableModel);
+        reszletesadatok.setShowGrid(true);
+    }
+
+    private void eroadatok_tablatorlo() {
+        DefaultTableModel tableModel = (DefaultTableModel) erok.getModel();
+        int i = tableModel.getRowCount();
+        if (i > 0) {
+            for (int k = 0; k < i; k++) {
+                tableModel.removeRow(0);
+            }
+        }
+    }
+
+    private void eroadatok_tablatolto() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        DefaultTableModel tableModel = (DefaultTableModel) erok.getModel();
+        eroadatok_tablatorlo();
+        tarto.tartoerok.clear();
+        tarto.parancs = "FROM Tartoerok where projekt ='" + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '1' order by hely";
+        //System.out.println(parancs);
+        tarto.tartoerok = session.createQuery(tarto.parancs).list();
+        for (int i = 0; i < tarto.tartoerok.size(); i++) {
+            String[] data = new String[3];
+            data[0] = String.valueOf(tarto.tartoerok.get(i).getId());
+            data[1] = String.valueOf(tarto.tartoerok.get(i).getErtek());
+            data[2] = String.valueOf(tarto.tartoerok.get(i).getHely());
+            tableModel.addRow(data);
+        }
+        // Az oszlopok középre igazítása
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(konzol1.CENTER);
+        for (int k = 0; k < 3; k++) {
+            erok.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
+        }
+        erok.setModel(tableModel);
+        erok.setShowGrid(true);
+    }
+
+    private void megoszloadatok_tablatorlo() {
+        DefaultTableModel tableModel = (DefaultTableModel) terhelesek.getModel();
+        int i = tableModel.getRowCount();
+        if (i > 0) {
+            for (int k = 0; k < i; k++) {
+                tableModel.removeRow(0);
+            }
+        }
+    }
+
+    private void megoszloadatok_tablatolto() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        DefaultTableModel tableModel = (DefaultTableModel) terhelesek.getModel();
+        megoszloadatok_tablatorlo();
+        tarto.tartoerok.clear();
+        tarto.parancs = "FROM Tartoerok where projekt ='" + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '2' order by hely";
+        //System.out.println(parancs);
+        tarto.tartoerok = session.createQuery(tarto.parancs).list();
+        for (int i = 0; i < tarto.tartoerok.size(); i++) {
+            String[] data = new String[5];
+            data[0] = String.valueOf(tarto.tartoerok.get(i).getId());
+            data[1] = String.valueOf(tarto.tartoerok.get(i).getErtek());
+            data[2] = String.valueOf(tarto.tartoerok.get(i).getHely());
+            data[3] = String.valueOf(tarto.tartoerok.get(i).getHossz());
+            data[4] = tarto.tartoerok.get(i).getSzelveny();
+            tableModel.addRow(data);
+        }
+        // Az oszlopok középre igazítása
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(konzol1.CENTER);
+        for (int k = 0; k < 5; k++) {
+            terhelesek.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
+        }
+        terhelesek.setModel(tableModel);
+        terhelesek.setShowGrid(true);
+    }
+
+    private void nyomatekadatok_tablatorlo() {
+        DefaultTableModel tableModel = (DefaultTableModel) nyomatekok.getModel();
+        int i = tableModel.getRowCount();
+        if (i > 0) {
+            for (int k = 0; k < i; k++) {
+                tableModel.removeRow(0);
+            }
+        }
+    }
+
+    private void nyomatekadatok_tablatolto() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        DefaultTableModel tableModel = (DefaultTableModel) nyomatekok.getModel();
+        nyomatekadatok_tablatorlo();
+        tarto.tartoerok.clear();
+        tarto.parancs = "FROM Tartoerok where projekt ='" + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '3' order by hely";
+        //System.out.println(parancs);
+        tarto.tartoerok = session.createQuery(tarto.parancs).list();
+        for (int i = 0; i < tarto.tartoerok.size(); i++) {
+            String[] data = new String[3];
+            data[0] = String.valueOf(tarto.tartoerok.get(i).getId());
+            data[1] = String.valueOf(tarto.tartoerok.get(i).getErtek());
+            data[2] = String.valueOf(tarto.tartoerok.get(i).getHely());
+            tableModel.addRow(data);
+        }
+        // Az oszlopok középre igazítása
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(konzol1.CENTER);
+        for (int k = 0; k < 3; k++) {
+            nyomatekok.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
+        }
+        nyomatekok.setModel(tableModel);
+        nyomatekok.setShowGrid(true);
+    }
 
     private void Ero_hozzaadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Ero_hozzaadasActionPerformed
         // TODO add your handling code here:
-        int UpdateQuery;
-        //String parancs;
-        DefaultTableModel tableModel = (DefaultTableModel) erok.getModel();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Tartoerok ujtartoero = new Tartoerok();
         if (ujero.getText().length() > 0) {
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                // Az új erő lerögzítése
-                tarto.parancs = "insert into tartoerok (projekt,tartonev,ertek,hely,jelleg,szelveny) values ('";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev + "','";
-                tarto.parancs = tarto.parancs + tarto.megnevezes + "','";
-                tarto.parancs = tarto.parancs + ujero.getText() + "','";
-                tarto.parancs = tarto.parancs + ujerohely.getText() + "','1','');";
-                //System.out.println("SQL parancs: " + tarto.parancs);
-                //rs = st.executeQuery(parancs);           
-                UpdateQuery = st.executeUpdate(tarto.parancs);
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            // A Jtable frissítése
-            int j = tableModel.getRowCount();
-            if (j > 0) {
-                for (int k = 0; k < j; k++) {
-                    tableModel.removeRow(0);
-                }
-            }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                tarto.parancs = "SELECT id,ertek,hely FROM tartoerok where projekt ='";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '1' order by hely;";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(tarto.parancs);
-                while (rs.next()) {
-                    String[] data = new String[3];
-                    data[0] = String.valueOf(rs.getInt(1));
-                    data[1] = String.valueOf(rs.getFloat(2));
-                    data[2] = String.valueOf(rs.getFloat(3));
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            erok.setModel(tableModel);
-            erok.setShowGrid(true);
+            session.beginTransaction();
+            ujtartoero.setProjekt(tarto.ProjektNev.toString());
+            ujtartoero.setTartonev(tarto.megnevezes.toString());
+            ujtartoero.setErtek(Float.parseFloat(ujero.getText()));
+            ujtartoero.setHely(Float.parseFloat(ujerohely.getText()));
+            ujtartoero.setHossz(0f);
+            ujtartoero.setJelleg(1);
+            ujtartoero.setFelvitel(now);
+            ujtartoero.setSzelveny("");
+            session.save(ujtartoero);
+            eroadatok_tablatolto();
+            session.getTransaction().commit();
+            session.close();
+            // A Jtable frissítése            
             ujero.setText("");
             ujerohely.setText("");
-            rajzol();  // A tartó adatainak beolvasása és újrarajzoltatása
+            rajzol(0);  // A tartó adatainak beolvasása és újrarajzoltatása
         }
     }//GEN-LAST:event_Ero_hozzaadasActionPerformed
 
     private void Megoszlo_hozzaadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Megoszlo_hozzaadasActionPerformed
         // TODO add your handling code here:
-        int UpdateQuery;
-        DefaultTableModel tableModel = (DefaultTableModel) terhelesek.getModel();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Tartoerok ujtartoero = new Tartoerok();
         if (ujmegoszlo.getText().length() > 0) {
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                // Az új terhelés lerögzítése
-                tarto.parancs = "insert into tartoerok (projekt,tartonev,ertek,hely,hossz,jelleg,szelveny) values ('";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev.toString() + "','";
-                tarto.parancs = tarto.parancs + tarto.megnevezes.toString() + "','";
-                tarto.parancs = tarto.parancs + ujmegoszlo.getText() + "','";
-                tarto.parancs = tarto.parancs + ujmegoszlohely.getText() + "','";
-                tarto.parancs = tarto.parancs + ujmegoszlohossz.getText() + "','2','');";
-
-                //System.out.println("SQL parancs: " + tarto.parancs);
-                //rs = st.executeQuery(parancs);           
-                UpdateQuery = st.executeUpdate(tarto.parancs);
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            // A Jtable frissítése
-            int j = tableModel.getRowCount();
-            if (j > 0) {
-                for (int k = 0; k < j; k++) {
-                    tableModel.removeRow(0);
-                }
-            }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                tarto.parancs = "SELECT id,ertek,hely,hossz,szelveny FROM tartoerok where projekt ='";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '2' order by hely;";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(tarto.parancs);
-                while (rs.next()) {
-                    String[] data = new String[5];
-                    data[0] = String.valueOf(rs.getInt(1));
-                    data[1] = String.valueOf(rs.getFloat(2));
-                    data[2] = String.valueOf(rs.getFloat(3));
-                    data[3] = String.valueOf(rs.getFloat(4));
-                    data[4] = rs.getString(5);
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            terhelesek.setModel(tableModel);
-            terhelesek.setShowGrid(true);
+            session.beginTransaction();
+            ujtartoero.setProjekt(tarto.ProjektNev.toString());
+            ujtartoero.setTartonev(tarto.megnevezes.toString());
+            ujtartoero.setErtek(Float.parseFloat(ujmegoszlo.getText()));
+            ujtartoero.setHely(Float.parseFloat(ujmegoszlohely.getText()));
+            ujtartoero.setHossz(Float.parseFloat(ujmegoszlohossz.getText()));
+            ujtartoero.setJelleg(2);
+            ujtartoero.setSzelveny("");
+            ujtartoero.setFelvitel(now);
+            session.save(ujtartoero);
+            megoszloadatok_tablatolto();
+            session.getTransaction().commit();
+            session.close();
+            // A Jtable frissítése            
             ujmegoszlo.setText("");
             ujmegoszlohely.setText("");
             ujmegoszlohossz.setText("");
-            rajzol();  // A tartó adatainak beolvasása és újrarajzoltatása
+            rajzol(0);  // A tartó adatainak beolvasása és újrarajzoltatása
         }
     }//GEN-LAST:event_Megoszlo_hozzaadasActionPerformed
 
-    private void erokAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_erokAncestorAdded
-        // TODO add your handling code here:
-    }//GEN-LAST:event_erokAncestorAdded
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void tarto_kivalasztasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tarto_kivalasztasActionPerformed
         // TODO add your handling code here:        
-        DefaultTableModel tableModel_erok = (DefaultTableModel) erok.getModel();
-        DefaultTableModel tableModel_terhelesek = (DefaultTableModel) terhelesek.getModel();
-        DefaultTableModel tableModel_nyomatekok = (DefaultTableModel) nyomatekok.getModel();
-        tarto.megnevezes = jComboBox1.getSelectedItem().toString();
-        rajzol();  // A tartó adatainak beolvasása és újrarajzoltatása
+        jTabbedPane1.setEnabled(true);
+        feszultsegek.setEnabled(true);
+        ero_nyomatek.setEnabled(true);
+        alakvaltozas.setEnabled(true);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        tarto.megnevezes = tartonevek_lista.getSelectedItem().toString();
+        TartoHossz.setText("");
+        konzol1.setText("");
+        konzol2.setText("");
+        TartoHossz.setEnabled(false);
+        konzol1.setEnabled(false);
+        konzol2.setEnabled(false);
+        rajzol(0);  // A tartó adatainak beolvasása és újrarajzoltatása
+        if (tarto.tarto.get(0).getTipus() == 1) {
+            TartoHossz.setEnabled(true);
+            TartoHossz.setText(String.valueOf(tarto.tarto.get(0).getHossz()));
+        }
+        if (tarto.tarto.get(0).getTipus() == 2) {
+            konzol1.setEnabled(true);
+            konzol1.setText(String.valueOf(tarto.tarto.get(0).getKonzol1()));
+        }
+        if (tarto.tarto.get(0).getTipus() == 3) {
+            TartoHossz.setEnabled(true);
+            TartoHossz.setText(String.valueOf(tarto.tarto.get(0).getHossz()));
+            konzol1.setEnabled(true);
+            konzol1.setText(String.valueOf(tarto.tarto.get(0).getKonzol1()));
+            konzol2.setEnabled(true);
+            konzol2.setText(String.valueOf(tarto.tarto.get(0).getKonzol2()));
+        }
+        szelvenyek_listaja.setSelectedItem(tarto.szelveny);
         // A terhek kijelzése
-        // Az erők        
-        int j = tableModel_erok.getRowCount();
-        if (j > 0) {
-            for (int k = 0; k < j; k++) {
-                tableModel_erok.removeRow(0);
-            }
-        }
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            tarto.parancs = "SELECT id,ertek,hely FROM tartoerok where projekt ='";
-            tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '1' order by hely;";
-            //System.out.println("SQL: " + parancs);
-            rs = st.executeQuery(tarto.parancs);
-            while (rs.next()) {
-                String[] data = new String[4];
-                data[0] = String.valueOf(rs.getInt(1));
-                data[1] = String.valueOf(rs.getFloat(2));
-                data[2] = String.valueOf(rs.getFloat(3));
-                tableModel_erok.addRow(data);
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        erok.setModel(tableModel_erok);
-        erok.setShowGrid(true);
+        // Az erők       
+        session.beginTransaction();
+        eroadatok_tablatolto();
         // A megoszló terhelések
-        j = tableModel_terhelesek.getRowCount();
-        if (j > 0) {
-            for (int k = 0; k < j; k++) {
-                tableModel_terhelesek.removeRow(0);
-            }
-        }
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            tarto.parancs = "SELECT id,ertek,hely,hossz,szelveny FROM tartoerok where projekt ='";
-            tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '2' order by hely;";
-            //System.out.println("SQL: " + parancs);
-            rs = st.executeQuery(tarto.parancs);
-            while (rs.next()) {
-                String[] data = new String[5];
-                data[0] = String.valueOf(rs.getInt(1));
-                data[1] = String.valueOf(rs.getFloat(2));
-                data[2] = String.valueOf(rs.getFloat(3));
-                data[3] = String.valueOf(rs.getFloat(4));
-                data[4] = rs.getString(5);
-                tableModel_terhelesek.addRow(data);
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        terhelesek.setModel(tableModel_terhelesek);
-        terhelesek.setShowGrid(true);
+        megoszloadatok_tablatolto();
         // A koncentrált nyomatékok
-        j = tableModel_nyomatekok.getRowCount();
-        if (j > 0) {
-            for (int k = 0; k < j; k++) {
-                tableModel_nyomatekok.removeRow(0);
-            }
-        }
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            tarto.parancs = "SELECT id,ertek,hely FROM tartoerok where projekt ='";
-            tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '3' order by hely;";
-            //System.out.println("SQL: " + parancs);
-            rs = st.executeQuery(tarto.parancs);
-            while (rs.next()) {
-                String[] data = new String[3];
-                data[0] = String.valueOf(rs.getInt(1));
-                data[1] = String.valueOf(rs.getFloat(2));
-                data[2] = String.valueOf(rs.getFloat(3));
-                tableModel_nyomatekok.addRow(data);
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        nyomatekok.setModel(tableModel_nyomatekok);
-        nyomatekok.setShowGrid(true);
-    }//GEN-LAST:event_jButton4ActionPerformed
+        nyomatekadatok_tablatolto();
+        reszletesadatok_tablatolto();
+        session.getTransaction().commit();
+        session.close();
+    }//GEN-LAST:event_tarto_kivalasztasActionPerformed
 
-    private void rajzol() {
+    private void rajzol(Integer kijelzes) {
         // A tartó metszékeinek számolása és az ábrák újrarajzolása
-        // A tartó adatainak újrabeolvasása         
-        tarto.beolvas();   // Adatbeolvasás
-        tarto.kiszamol();  // T,M,Tau, Szigma kiszámolása
-        TartoHossz.setText(String.valueOf(tarto.hossz));
-        konzol1.setText(String.valueOf(tarto.konzol1));
-        konzol2.setText(String.valueOf(tarto.konzol2));
-        profil.setText(tarto.szelveny);
+        // A tartó adatainak újrabeolvasása
+        if (kijelzes == 0) {
+            tarto.beolvas();   // Adatbeolvasás
+            tarto.kiszamol();  // T,M,Tau, Szigma kiszámolása
+        }
+        TartoHossz.setText(String.valueOf(tarto.tarto.get(0).getHossz()));
+        konzol1.setText(String.valueOf(tarto.tarto.get(0).getKonzol1()));
+        konzol2.setText(String.valueOf(tarto.tarto.get(0).getKonzol2()));
         // A tartórajz kimenete PNG-be        
         tarto.pngrajz();
         // A PNG rajz visszaillesztése
-        ImageIcon icon = new ImageIcon(tarto.filenev);
-        icon.getImage().flush();
-        pngrajz.setIcon(icon);
+        if (ero_nyomatek.isSelected()) {
+            ImageIcon icon = new ImageIcon(tarto.bi1);
+            icon.getImage().flush();
+            pngrajz.setIcon(icon);
+        }
+        if (feszultsegek.isSelected()) {
+            ImageIcon icon = new ImageIcon(tarto.bi2);
+            icon.getImage().flush();
+            pngrajz.setIcon(icon);
+        }
+        if (alakvaltozas.isSelected()) {
+            ImageIcon icon = new ImageIcon(tarto.bi3);
+            icon.getImage().flush();
+            pngrajz.setIcon(icon);
+        }
         pngrajz.updateUI();
     }
 
-    protected ImageIcon createImageIcon(String path,
-            String description) {
+    protected ImageIcon createImageIcon(String path, String description) {
         java.net.URL imgURL = getClass().getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);
@@ -853,11 +1037,12 @@ public class kettamaszu extends javax.swing.JInternalFrame {
         }
     }
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void nyomatekok_modositasaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nyomatekok_modositasaActionPerformed
         // TODO add your handling code here:
+        Session session = HibernateUtil.getSessionFactory().openSession();
         DefaultTableModel tableModel = (DefaultTableModel) nyomatekok.getModel();
-        int UpdateQuery;
         if (tableModel.getRowCount() > 0) {
+            session.beginTransaction();
             // A Jtable-ben lévő adatok módosítása
             int j = tableModel.getRowCount();
             for (int k = 0; k < j; k++) {
@@ -866,81 +1051,33 @@ public class kettamaszu extends javax.swing.JInternalFrame {
                 data[1] = tableModel.getValueAt(k, 1).toString();
                 data[2] = tableModel.getValueAt(k, 2).toString();
                 if (tableModel.getValueAt(k, 3) != null) {
-                    // Adattörlés
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                        st = co.createStatement();
-                        // A bejelölt tartók törlése
-                        tarto.parancs = "delete from tartoerok where id='" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(tarto.parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    // Adattörlés                    
+                    tarto.parancs = "delete from Tartoerok where id='" + data[0] + "'";
+                    query = session.createQuery(tarto.parancs);
+                    query.executeUpdate();
                 } else {
                     // Adatmódosítás
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                        st = co.createStatement();
-                        // A megváltoztatott erő adatok visszaírása
-                        tarto.parancs = "update tartoerok set ertek='" + data[1] + "', ";
-                        tarto.parancs = tarto.parancs + " hely='" + data[2] + "' ";
-                        tarto.parancs = tarto.parancs + " where id = '" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(tarto.parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    tarto.parancs = "update Tartoerok set ertek='" + data[1] + "', ";
+                    tarto.parancs = tarto.parancs + " hely='" + data[2] + "' ";
+                    tarto.parancs = tarto.parancs + " where id = '" + data[0] + "'";
+                    query = session.createQuery(tarto.parancs);
+                    query.executeUpdate();
                 }
             }
             // Jtable frissítése
-            j = tableModel.getRowCount();
-            for (int k = 0; k < j; k++) {
-                tableModel.removeRow(0);
-            }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                tarto.parancs = "SELECT id,ertek,hely FROM tartoerok where projekt ='";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '3' order by hely;";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(tarto.parancs);
-                while (rs.next()) {
-                    String[] data = new String[3];
-                    data[0] = String.valueOf(rs.getInt(1));
-                    data[1] = String.valueOf(rs.getFloat(2));
-                    data[2] = String.valueOf(rs.getFloat(3));
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            nyomatekok.setModel(tableModel);
-            nyomatekok.setShowGrid(true);
-            rajzol();  // A tartó adatainak beolvasása és újrarajzoltatása
+            nyomatekadatok_tablatolto();
+            session.getTransaction().commit();
+            session.close();
+            rajzol(0);  // A tartó adatainak beolvasása és újrarajzoltatása
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_nyomatekok_modositasaActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void erok_modositasaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_erok_modositasaActionPerformed
         // TODO add your handling code here:
+        Session session = HibernateUtil.getSessionFactory().openSession();
         DefaultTableModel tableModel = (DefaultTableModel) erok.getModel();
-        int UpdateQuery;
         if (tableModel.getRowCount() > 0) {
+            session.beginTransaction();
             // A Jtable-ben lévő adatok módosítása
             int j = tableModel.getRowCount();
             for (int k = 0; k < j; k++) {
@@ -949,81 +1086,33 @@ public class kettamaszu extends javax.swing.JInternalFrame {
                 data[1] = tableModel.getValueAt(k, 1).toString();
                 data[2] = tableModel.getValueAt(k, 2).toString();
                 if (tableModel.getValueAt(k, 3) != null) {
-                    // Adattörlés
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                        st = co.createStatement();
-                        // A bejelölt tartók törlése
-                        tarto.parancs = "delete from tartoerok where id='" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(tarto.parancs);
-                        //System.out.println("SQL parancs: " + tarto.parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    // Adattörlés                    
+                    tarto.parancs = "delete from Tartoerok where id='" + data[0] + "'";
+                    query = session.createQuery(tarto.parancs);
+                    query.executeUpdate();
                 } else {
                     // Adatmódosítás
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                        st = co.createStatement();
-                        // A megváltoztatott erő adatok visszaírása
-                        tarto.parancs = "update tartoerok set ertek='" + data[1] + "', ";
-                        tarto.parancs = tarto.parancs + " hely='" + data[2] + "' ";
-                        tarto.parancs = tarto.parancs + " where id = '" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(tarto.parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    tarto.parancs = "update Tartoerok set ertek='" + data[1] + "', ";
+                    tarto.parancs = tarto.parancs + " hely='" + data[2] + "' ";
+                    tarto.parancs = tarto.parancs + " where id = '" + data[0] + "'";
+                    query = session.createQuery(tarto.parancs);
+                    query.executeUpdate();
                 }
             }
-            // Jtable frissítése
-            j = tableModel.getRowCount();
-            for (int k = 0; k < j; k++) {
-                tableModel.removeRow(0);
-            }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                tarto.parancs = "SELECT id,ertek,hely FROM tartoerok where projekt ='";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '1' order by hely;";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(tarto.parancs);
-                while (rs.next()) {
-                    String[] data = new String[3];
-                    data[0] = String.valueOf(rs.getInt(1));
-                    data[1] = String.valueOf(rs.getFloat(2));
-                    data[2] = String.valueOf(rs.getFloat(3));
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            erok.setModel(tableModel);
-            erok.setShowGrid(true);
-            rajzol();  // A tartó adatainak beolvasása és újrarajzoltatása
+            // A Jtable frissítése
+            eroadatok_tablatolto();
+            session.getTransaction().commit();
+            session.close();
+            rajzol(0);  // A tartó adatainak beolvasása és újrarajzoltatása            
         }
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_erok_modositasaActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void terhek_modositasaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terhek_modositasaActionPerformed
         // TODO add your handling code here:
+        Session session = HibernateUtil.getSessionFactory().openSession();
         DefaultTableModel tableModel = (DefaultTableModel) terhelesek.getModel();
-        int UpdateQuery;
         if (tableModel.getRowCount() > 0) {
+            session.beginTransaction();
             // A Jtable-ben lévő adatok módosítása
             int j = tableModel.getRowCount();
             for (int k = 0; k < j; k++) {
@@ -1033,305 +1122,206 @@ public class kettamaszu extends javax.swing.JInternalFrame {
                 data[2] = tableModel.getValueAt(k, 2).toString();
                 data[3] = tableModel.getValueAt(k, 3).toString();
                 if (tableModel.getValueAt(k, 5) != null) {
-                    // Adattörlés
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                        st = co.createStatement();
-                        // A bejelölt tartók törlése
-                        tarto.parancs = "delete from tartoerok where id='" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(tarto.parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    // Adattörlés                    
+                    tarto.parancs = "delete from Tartoerok where id='" + data[0] + "'";
+                    query = session.createQuery(tarto.parancs);
+                    query.executeUpdate();
                 } else {
                     // Adatmódosítás
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                        st = co.createStatement();
-                        // A megváltoztatott erő adatok visszaírása
-                        tarto.parancs = "update tartoerok set ertek='" + data[1] + "', ";
-                        tarto.parancs = tarto.parancs + " hely='" + data[2] + "', ";
-                        tarto.parancs = tarto.parancs + " hossz='" + data[3] + "' ";
-                        tarto.parancs = tarto.parancs + " where id = '" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(tarto.parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    tarto.parancs = "update Tartoerok set ertek='" + data[1] + "', ";
+                    tarto.parancs = tarto.parancs + " hely='" + data[2] + "', ";
+                    tarto.parancs = tarto.parancs + " hossz='" + data[3] + "' ";
+                    tarto.parancs = tarto.parancs + " where id = '" + data[0] + "'";
+                    query = session.createQuery(tarto.parancs);
+                    query.executeUpdate();
                 }
-            }
-            // Jtable frissítése
-            j = tableModel.getRowCount();
-            for (int k = 0; k < j; k++) {
-                tableModel.removeRow(0);
-            }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                tarto.parancs = "SELECT id,ertek,hely,hossz,szelveny FROM tartoerok where projekt ='";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '2' order by hely;";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(tarto.parancs);
-                while (rs.next()) {
-                    String[] data = new String[5];
-                    data[0] = String.valueOf(rs.getInt(1));
-                    data[1] = String.valueOf(rs.getFloat(2));
-                    data[2] = String.valueOf(rs.getFloat(3));
-                    data[3] = String.valueOf(rs.getFloat(4));
-                    data[4] = rs.getString(5);
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            terhelesek.setModel(tableModel);
-            terhelesek.setShowGrid(true);
-            rajzol();  // A tartó adatainak beolvasása és újrarajzoltatása
-        }
-    }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void Nyomatek_hozzaadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Nyomatek_hozzaadasActionPerformed
-        // TODO add your handling code here:
-        int UpdateQuery;
-        DefaultTableModel tableModel = (DefaultTableModel) nyomatekok.getModel();
-        if (ujnyomatek.getText().length() > 0) {
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                // Az új megoszló teher lerögzítése
-                tarto.parancs = "insert into tartoerok (projekt,tartonev,ertek,hely,jelleg,szelveny) values ('";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev + "','";
-                tarto.parancs = tarto.parancs + tarto.megnevezes + "','";
-                tarto.parancs = tarto.parancs + ujnyomatek.getText() + "','";
-                tarto.parancs = tarto.parancs + ujnyomatekhely.getText() + "','3','');";
-                //System.out.println("SQL parancs: " + tarto.parancs);
-                //rs = st.executeQuery(parancs);           
-                UpdateQuery = st.executeUpdate(tarto.parancs);
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
             }
             // A Jtable frissítése
-            int j = tableModel.getRowCount();
-            if (j > 0) {
-                for (int k = 0; k < j; k++) {
-                    tableModel.removeRow(0);
-                }
-            }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                st = co.createStatement();
-                tarto.parancs = "SELECT id,ertek,hely FROM tartoerok where projekt ='";
-                tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '3' order by hely;";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(tarto.parancs);
-                while (rs.next()) {
-                    String[] data = new String[3];
-                    data[0] = String.valueOf(rs.getInt(1));
-                    data[1] = String.valueOf(rs.getFloat(2));
-                    data[2] = String.valueOf(rs.getFloat(3));
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            nyomatekok.setModel(tableModel);
-            nyomatekok.setShowGrid(true);
+            megoszloadatok_tablatolto();
+            session.getTransaction().commit();
+            session.close();
+            rajzol(0);  // A tartó adatainak beolvasása és újrarajzoltatása
+        }
+    }//GEN-LAST:event_terhek_modositasaActionPerformed
+
+    private void Nyomatek_hozzaadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Nyomatek_hozzaadasActionPerformed
+        // TODO add your handling code here:    
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Tartoerok ujtartoero = new Tartoerok();
+        if (ujnyomatek.getText().length() > 0) {
+            session.beginTransaction();
+            ujtartoero.setSzelveny("");
+            ujtartoero.setProjekt(tarto.ProjektNev.toString());
+            ujtartoero.setTartonev(tarto.megnevezes.toString());
+            ujtartoero.setErtek(Float.parseFloat(ujnyomatek.getText()));
+            ujtartoero.setHossz(0f);
+            ujtartoero.setHely(Float.parseFloat(ujnyomatekhely.getText()));
+            ujtartoero.setJelleg(3);
+            ujtartoero.setFelvitel(now);
+            session.save(ujtartoero);
+            // A Jtable frissítése
+            nyomatekadatok_tablatolto();
+            session.getTransaction().commit();
+            session.close();
             ujnyomatek.setText("");
             ujnyomatekhely.setText("");
-            rajzol();  // A tartó adatainak beolvasása és újrarajzoltatása
+            rajzol(0);  // A tartó adatainak beolvasása és újrarajzoltatása
         }
     }//GEN-LAST:event_Nyomatek_hozzaadasActionPerformed
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void tartoadat_modositasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tartoadat_modositasActionPerformed
         // TODO add your handling code here:
         // A Tartó dimenzionális adatainak megváltoztatása
-        int UpdateQuery;
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A megváltoztatott adatok visszaírása
-            tarto.parancs = "update tartok set";
-            if (tarto.tipus == 1) {
-                tarto.parancs = tarto.parancs + " hossz='" + TartoHossz.getText() + "' ";
-            }
-            if (tarto.tipus == 2) {
-                tarto.parancs = tarto.parancs + " konzol1='" + konzol1.getText() + "' ";
-            }
-            if (tarto.tipus == 3) {
-                tarto.parancs = tarto.parancs + " hossz='" + TartoHossz.getText() + "', ";
-                tarto.parancs = tarto.parancs + " konzol1='" + konzol1.getText() + "', ";
-                tarto.parancs = tarto.parancs + " konzol2='" + konzol2.getText() + "' ";
-            }
-            tarto.parancs = tarto.parancs + " where projekt = '" + tarto.ProjektNev + "' and ";
-            tarto.parancs = tarto.parancs + " tartonev = '" + tarto.megnevezes + "'; ";
-            UpdateQuery = st.executeUpdate(tarto.parancs);
-            //System.out.println("SQL parancs: " + tarto.parancs);
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Tartoerok ujtartoero = new Tartoerok();
+        tarto.tarto.get(0).setHossz(Float.parseFloat(TartoHossz.getText()));
+        session.beginTransaction();
+        tarto.parancs = "update Tartok set";
+        if (tarto.tarto.get(0).getTipus() == 1) {
+            tarto.parancs = tarto.parancs + " hossz='" + TartoHossz.getText() + "' ";
         }
-        rajzol();
-    }//GEN-LAST:event_jButton8ActionPerformed
+        if (tarto.tarto.get(0).getTipus() == 2) {
+            tarto.parancs = tarto.parancs + " konzol1='" + konzol1.getText() + "' ";
+        }
+        if (tarto.tarto.get(0).getTipus() == 3) {
+            tarto.parancs = tarto.parancs + " hossz='" + TartoHossz.getText() + "', ";
+            tarto.parancs = tarto.parancs + " konzol1='" + konzol1.getText() + "', ";
+            tarto.parancs = tarto.parancs + " konzol2='" + konzol2.getText() + "' ";
+        }
+        tarto.parancs = tarto.parancs + " where projekt = '" + tarto.ProjektNev + "' and ";
+        tarto.parancs = tarto.parancs + " tartonev = '" + tarto.megnevezes + "'";
+        query = session.createQuery(tarto.parancs);
+        query.executeUpdate();
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        // TODO add your handling code here:
-        // Profilváltoztatás                
-        float teljeshossz = tarto.hossz + tarto.konzol1 + tarto.konzol2;
+        float teljeshossz = tarto.tarto.get(0).getHossz() + tarto.tarto.get(0).getKonzol1() + tarto.tarto.get(0).getKonzol2();
         float ertek = 0f;   // Ez lesz a folyómétersúly
-        int UpdateQuery;
-        DefaultTableModel tableModel = (DefaultTableModel) terhelesek.getModel();
-        // A tartóerők között (meg)lévő megoszló teher kitörlése 
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            tarto.parancs = "delete FROM tartoerok where projekt ='";
-            tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '2' ";
-            tarto.parancs = tarto.parancs + " and szelveny = '" + tarto.szelveny + "';";
-            //System.out.println("SQL: " + tarto.parancs);
-            UpdateQuery = st.executeUpdate(tarto.parancs);
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        tarto.szelveny = szelveny.getSelectedItem().toString();
+
+        // A tartóerők közül a (meg)lévő megoszló teher kitörlése 
+        tarto.parancs = "delete FROM Tartoerok where projekt ='";
+        tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '2' ";
+        tarto.parancs = tarto.parancs + " and szelveny = '" + tarto.szelveny + "'";
+        query = session.createQuery(tarto.parancs);
+        query.executeUpdate();
+
+        // Az új szelvény neve
+        tarto.szelveny = szelvenyek_listaja.getSelectedItem().toString();
         // Az új tartó folyómétersúlyának kikeresése
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            tarto.parancs = "SELECT (fmsuly / 10000) as folyometersuly FROM szelveny where nev ='" + tarto.szelveny + "';";
-            //System.out.println("SQL: " + parancs);
-            rs = st.executeQuery(tarto.parancs);
-            while (rs.next()) {
-                ertek = rs.getFloat("folyometersuly");
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        // A profilnév frissítése
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            tarto.parancs = "update tartok set szelveny = '" + szelveny.getSelectedItem().toString() + "' where projekt ='";
-            tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "';";
-            //System.out.println("SQL: " + parancs);
-            UpdateQuery = st.executeUpdate(tarto.parancs);
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        // Az új tartóerő bevitele        
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A megváltozott profil adatának lerögzítése megoszlóként
-            tarto.parancs = "insert into tartoerok (projekt,tartonev,szelveny,ertek,hely,hossz,jelleg) values ('";
-            tarto.parancs = tarto.parancs + tarto.ProjektNev + "','";
-            tarto.parancs = tarto.parancs + tarto.megnevezes + "','";
-            tarto.parancs = tarto.parancs + tarto.szelveny + "','";
-            tarto.parancs = tarto.parancs + ertek + "','0','";
-            tarto.parancs = tarto.parancs + teljeshossz + "','2');";
-            //System.out.println("SQL parancs: " + parancs);
-            //rs = st.executeQuery(parancs);           
-            UpdateQuery = st.executeUpdate(tarto.parancs);
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
+        tarto.parancs = "FROM Szelveny where nev ='" + tarto.szelveny + "'";
+        tarto.profil = session.createQuery(tarto.parancs).list();
+        ertek = tarto.profil.get(0).getFmsuly() / 10000;
+        // A profilnév frissítése        
+        tarto.parancs = "update Tartok set szelveny = '" + szelvenyek_listaja.getSelectedItem().toString() + "' where projekt ='";
+        tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "'";
+        query = session.createQuery(tarto.parancs);
+        query.executeUpdate();
+        // Az új tartóerő bevitele          
+        ujtartoero.setProjekt(tarto.ProjektNev.toString());
+        ujtartoero.setTartonev(tarto.megnevezes.toString());
+        ujtartoero.setSzelveny(tarto.szelveny);
+        ujtartoero.setErtek(ertek);
+        ujtartoero.setHely(0f);
+        ujtartoero.setHossz(teljeshossz);
+        ujtartoero.setJelleg(2);
+        ujtartoero.setFelvitel(now);
+        session.save(ujtartoero);
         // A Jtable frissítése
-        int j = tableModel.getRowCount();
-        if (j > 0) {
-            for (int k = 0; k < j; k++) {
-                tableModel.removeRow(0);
+        megoszloadatok_tablatolto();
+        session.getTransaction().commit();
+        session.close();
+        rajzol(0);
+    }//GEN-LAST:event_tartoadat_modositasActionPerformed
+
+    private void project_valtoztatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_project_valtoztatasActionPerformed
+        // TODO add your handling code here:
+        // Az aktuális projekt bejelölése        
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        tarto.parancs = "update Projectek set aktiv = '0' where aktiv = '1'";
+        query = session.createQuery(tarto.parancs);
+        query.executeUpdate();
+        tarto.parancs = "update Projectek set aktiv = '1' where projekt='";
+        tarto.parancs = tarto.parancs + tartonevek_lista.getSelectedItem().toString() + "'";
+        query = session.createQuery(tarto.parancs);
+        query.executeUpdate();
+
+        // Adattörlés
+        tartonevek_lista.removeAll();
+        TartoHossz.setText("");
+        konzol1.setText("");
+        konzol2.setText("");
+        szelvenyek_listaja.setSelectedIndex(0);
+        tarto.parancs = "FROM Tartok where projekt = '" + tarto.ProjektNev + "'";
+        //System.out.println(parancs);
+        List<Tartok> tartonevlista = session.createQuery(tarto.parancs).list();
+        for (int i = 0; i < tartonevlista.size(); i++) {
+            tartonevek_lista.addItem(tartonevlista.get(i).getTartonev());
+        }
+        session.getTransaction().commit();
+        session.close();
+        jTabbedPane1.setEnabled(false);
+        feszultsegek.setEnabled(false);
+        ero_nyomatek.setEnabled(false);
+        alakvaltozas.setEnabled(false);
+        // Az erők, nyomatékok és megoszlók törlése
+
+    }//GEN-LAST:event_project_valtoztatasActionPerformed
+
+    private void ero_nyomatekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ero_nyomatekActionPerformed
+        // TODO add your handling code here:
+        rajzol(0);
+    }//GEN-LAST:event_ero_nyomatekActionPerformed
+
+    private void feszultsegekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_feszultsegekActionPerformed
+        // TODO add your handling code here:
+        rajzol(0);
+    }//GEN-LAST:event_feszultsegekActionPerformed
+
+    private void alakvaltozasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alakvaltozasActionPerformed
+        // TODO add your handling code here:
+        rajzol(0);
+    }//GEN-LAST:event_alakvaltozasActionPerformed
+
+    private void metszet_jeloloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_metszet_jeloloActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel) reszletesadatok.getModel();
+        int i = tableModel.getRowCount();
+        if (i > 0) {
+            for (int k = 0; k < i; k++) {
+
+                if ((Boolean) tableModel.getValueAt(k, 14) == true) {
+                    //System.out.print("I:"+k+" kijelzés:"+tableModel.getValueAt(k, 14)+" ertek:"+tarto.metszekek.get(k).getKijelzes());
+                    tarto.metszekek.get(k).setKijelzes(1);
+                    //System.out.println(" ujertek:"+tarto.metszekek.get(k).getKijelzes());
+                } else {
+                    tarto.metszekek.get(k).setKijelzes(0);
+                }
             }
         }
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            tarto.parancs = "SELECT id,ertek,hely,hossz,szelveny FROM tartoerok where projekt ='";
-            tarto.parancs = tarto.parancs + tarto.ProjektNev + "' and tartonev = '" + tarto.megnevezes + "' and jelleg = '2' order by hely;";
-            //System.out.println("SQL: " + parancs);
-            rs = st.executeQuery(tarto.parancs);
-            while (rs.next()) {
-                String[] data = new String[5];
-                data[0] = String.valueOf(rs.getInt(1));
-                data[1] = String.valueOf(rs.getFloat(2));
-                data[2] = String.valueOf(rs.getFloat(3));
-                data[3] = String.valueOf(rs.getFloat(4));
-                data[4] = rs.getString(5);
-                tableModel.addRow(data);
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        terhelesek.setModel(tableModel);
-        terhelesek.setShowGrid(true);
-        rajzol();
-    }//GEN-LAST:event_jButton9ActionPerformed
+        reszletesadatok_tablatolto();
+        /*for (i = 0; i < tarto.metszekszam; i++) {
+            System.out.println("I:" + i + " kijelzés:" + tarto.metszekek.get(i).getKijelzes());
+        } */
+        rajzol(1);
+
+    }//GEN-LAST:event_metszet_jeloloActionPerformed
+
+    private void KilepesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KilepesActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_KilepesActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Ero_hozzaadas;
+    private javax.swing.JButton Kilepes;
     private javax.swing.JButton Megoszlo_hozzaadas;
     private javax.swing.JButton Nyomatek_hozzaadas;
+    private javax.swing.ButtonGroup Rajzmód;
     private javax.swing.JTextField TartoHossz;
+    private javax.swing.JCheckBox alakvaltozas;
+    private javax.swing.JCheckBox ero_nyomatek;
     private javax.swing.JTable erok;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JButton erok_modositasa;
+    private javax.swing.JCheckBox feszultsegek;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1344,7 +1334,6 @@ public class kettamaszu extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1352,18 +1341,29 @@ public class kettamaszu extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField konzol1;
     private javax.swing.JTextField konzol2;
+    private javax.swing.JButton metszet_jelolo;
     private javax.swing.JTable nyomatekok;
+    private javax.swing.JButton nyomatekok_modositasa;
     private javax.swing.JLabel pngrajz;
-    private javax.swing.JTextField profil;
-    private javax.swing.JTextField projekt;
-    private javax.swing.JComboBox szelveny;
+    private javax.swing.JButton project_valtoztatas;
+    private javax.swing.JComboBox projekt;
+    private javax.swing.JTable reszletesadatok;
+    private javax.swing.JComboBox szelvenyek_listaja;
+    private javax.swing.JButton tarto_kivalasztas;
+    private javax.swing.JButton tartoadat_modositas;
+    private javax.swing.JComboBox tartonevek_lista;
+    private javax.swing.JButton terhek_modositasa;
     private javax.swing.JTable terhelesek;
     private javax.swing.JTextField ujero;
     private javax.swing.JTextField ujerohely;

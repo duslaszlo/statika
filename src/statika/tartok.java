@@ -10,8 +10,17 @@
  */
 package statika;
 
-import java.sql.*;
+import Entities.Projectek;
+import Entities.Szelveny;
+import Entities.Tartoerok;
+import Entities.Tartok;
+import Hibernate.HibernateUtil;
+import java.util.List;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import java.util.Date;
 
 /**
  *
@@ -19,86 +28,42 @@ import javax.swing.table.DefaultTableModel;
  */
 public class tartok extends javax.swing.JInternalFrame {
 
-    static Connection co;
-    static Statement st;
-    static ResultSet rs;
     /**
      * Creates new form tartok
      */
     String megnevezes = "";
     String parancs;
-    int i;
-    int UpdateQuery;
+    
+    Query query;
+    int result;
+    Date now = new Date();
 
     public tartok() {
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-            st = co.createStatement();
-            // A projekt nevének a beolvasása
-            rs = st.executeQuery("SELECT projekt FROM projectek where aktiv = '1'");
-            while (rs.next()) {
-                megnevezes = rs.getString(1);
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        parancs = "FROM Projectek Where aktiv = '1'";
+        //System.out.println(parancs);
+        List<Projectek> project = session.createQuery(parancs).list();
+        for (int i = 0; i < project.size(); i++) {
+            megnevezes = project.get(i).getProjekt();
         }
-        System.out.println("Az aktuális projekt: " + megnevezes);
+        //System.out.println("Az aktuális projekt: " + megnevezes);
         initComponents();
         projekt.setText(megnevezes);
-        // A jComboBox1 feltöltése
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-            st = co.createStatement();
+        tartolista_tablatolto();
+        // A szelvények feltöltése
+        parancs = "FROM Szelveny order by nev";
+        //System.out.println(parancs);        
+        List<Szelveny> szelvenylista = session.createQuery(parancs).list();
+        szelvenyek_listaja.addItem("Válassz");
+        for (int i = 0; i < szelvenylista.size(); i++) {
             // A szelvénytár beolvasása
-            rs = st.executeQuery("SELECT nev FROM szelveny where megnevezes <> 'Összetett szelvény' order by nev ");
-            while (rs.next()) {
-                szelveny.addItem(rs.getString(1));
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+            szelvenyek_listaja.addItem(szelvenylista.get(i).getNev());
         }
+        session.getTransaction().commit();
+        session.close();
         // A hozzárendelt tartók beillesztése a Jtable-be
-
-        DefaultTableModel tableModel = (DefaultTableModel) tartolista.getModel();
-        tartolista.removeAll();
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-            st = co.createStatement();
-            parancs = "SELECT id,tartonev,hossz,konzol1,konzol2,szelveny FROM tartok where projekt ='";
-            parancs = parancs + megnevezes + "' order by id;";
-            //System.out.println("SQL: " + parancs);
-            rs = st.executeQuery(parancs);
-            i = 0;
-            while (rs.next()) {
-                i++;
-                String[] data = new String[6];
-                data[0] = String.valueOf(rs.getInt(1));
-                data[1] = rs.getString(2);
-                data[2] = String.valueOf(rs.getFloat(3));
-                data[3] = String.valueOf(rs.getFloat(4));
-                data[4] = String.valueOf(rs.getFloat(5));
-                data[5] = rs.getString(6);
-                tableModel.addRow(data);
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        tartolista.setModel(tableModel);
+        tartolista_tablatolto();
     }
 
     /**
@@ -118,7 +83,7 @@ public class tartok extends javax.swing.JInternalFrame {
         jLabel3 = new javax.swing.JLabel();
         tartonev = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        szelveny = new javax.swing.JComboBox();
+        szelvenyek_listaja = new javax.swing.JComboBox();
         Tartobeiro = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -132,12 +97,13 @@ public class tartok extends javax.swing.JInternalFrame {
         jLabel11 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tartolista = new javax.swing.JTable();
-        jButton3 = new javax.swing.JButton();
+        Tartomodositas = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         megjegyzes = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -161,7 +127,7 @@ public class tartok extends javax.swing.JInternalFrame {
         projekt.setText("Projektnév"); // NOI18N
         projekt.setBorder(null);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setText("Új tartó:"); // NOI18N
 
         jLabel3.setText("Megnevezés:"); // NOI18N
@@ -193,7 +159,7 @@ public class tartok extends javax.swing.JInternalFrame {
 
         jLabel10.setText("cm"); // NOI18N
 
-        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel11.setText("Hozzárendelt tartók:"); // NOI18N
 
         tartolista.setModel(new javax.swing.table.DefaultTableModel(
@@ -221,10 +187,10 @@ public class tartok extends javax.swing.JInternalFrame {
         });
         jScrollPane2.setViewportView(tartolista);
 
-        jButton3.setText("Módosítás"); // NOI18N
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        Tartomodositas.setText("Módosítás"); // NOI18N
+        Tartomodositas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                TartomodositasActionPerformed(evt);
             }
         });
 
@@ -236,27 +202,27 @@ public class tartok extends javax.swing.JInternalFrame {
 
         jLabel13.setText("Megjegyzés:");
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/statika/exit1.png"))); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSeparator2)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 367, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(projekt, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(119, 119, 119))
-                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(Tartomodositas, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 658, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
@@ -275,7 +241,7 @@ public class tartok extends javax.swing.JInternalFrame {
                                         .addComponent(megjegyzes, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
                                         .addGap(18, 18, 18)
                                         .addComponent(Tartobeiro, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(szelveny, javax.swing.GroupLayout.Alignment.LEADING, 0, 456, Short.MAX_VALUE)
+                                    .addComponent(szelvenyek_listaja, javax.swing.GroupLayout.Alignment.LEADING, 0, 456, Short.MAX_VALUE)
                                     .addComponent(tartonev, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -296,7 +262,16 @@ public class tartok extends javax.swing.JInternalFrame {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel8)
                                 .addComponent(jLabel9))
-                            .addComponent(jLabel10))))
+                            .addComponent(jLabel10)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(projekt, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(119, 119, 119))
+                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -326,7 +301,7 @@ public class tartok extends javax.swing.JInternalFrame {
                     .addComponent(jLabel6)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(szelveny, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(szelvenyek_listaja, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(konzol1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9)
                             .addComponent(jLabel4))
@@ -340,25 +315,77 @@ public class tartok extends javax.swing.JInternalFrame {
                             .addComponent(megjegyzes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
-                    .addComponent(jButton3))
-                .addGap(8, 8, 8)
+                    .addComponent(Tartomodositas))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void tartolista_tablatorlo() {
+        DefaultTableModel tableModel = (DefaultTableModel) tartolista.getModel();
+        int i = tableModel.getRowCount();
+        if (i > 0) {
+            for (int k = 0; k < i; k++) {
+                tableModel.removeRow(0);
+            }
+        }
+    }
+
+    private void tartolista_tablatolto() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        DefaultTableModel tableModel = (DefaultTableModel) tartolista.getModel();
+        tartolista_tablatorlo();
+        session.beginTransaction();
+        parancs = "FROM Tartok where projekt ='";
+        parancs = parancs + megnevezes + "' order by id";
+        //System.out.println(parancs);        
+        List<Tartok> tartok = session.createQuery(parancs).list();
+        for (int i = 0; i < tartok.size(); i++) {
+            String[] data = new String[6];
+            data[0] = String.valueOf(tartok.get(i).getId());
+            data[1] = tartok.get(i).getTartonev();
+            data[2] = String.valueOf(tartok.get(i).getHossz());
+            data[3] = String.valueOf(tartok.get(i).getKonzol1());
+            data[4] = String.valueOf(tartok.get(i).getKonzol2());
+            data[5] = String.valueOf(tartok.get(i).getSzelveny());
+            tableModel.addRow(data);
+        }
+        session.getTransaction().commit();
+        session.close();
+        tartolista.setModel(tableModel);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(tartonev.CENTER);
+        for (int k = 0; k < 6; k++) {
+            tartolista.getColumnModel().getColumn(k).setCellRenderer(centerRenderer);
+        }
+        // A tábla oszlopszélességei
+        tartolista.setAutoResizeMode(tartolista.AUTO_RESIZE_OFF);
+        tartolista.getColumnModel().getColumn(0).setPreferredWidth(50);
+        tartolista.getColumnModel().getColumn(1).setPreferredWidth(90);
+        tartolista.getColumnModel().getColumn(2).setPreferredWidth(90);
+        tartolista.getColumnModel().getColumn(3).setPreferredWidth(90);
+        tartolista.getColumnModel().getColumn(4).setPreferredWidth(90);
+        tartolista.getColumnModel().getColumn(5).setPreferredWidth(150);
+        tartolista.getColumnModel().getColumn(6).setPreferredWidth(90);
+    }
+
+    private void TartomodositasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TartomodositasActionPerformed
         // TODO add your handling code here:
+        Session session = HibernateUtil.getSessionFactory().openSession();
         DefaultTableModel tableModel = (DefaultTableModel) tartolista.getModel();
         //int UpdateQuery;
         float teljeshossz;
         if (tableModel.getRowCount() > 0) {
             // A Jtable-ben lévő adatok módosítása
+            session.beginTransaction();
             int j = tableModel.getRowCount();
             for (int k = 0; k < j; k++) {
                 String[] data = new String[6];
@@ -369,122 +396,51 @@ public class tartok extends javax.swing.JInternalFrame {
                 data[4] = tableModel.getValueAt(k, 4).toString();
                 data[5] = tableModel.getValueAt(k, 5).toString();
                 if (tableModel.getValueAt(k, 6) != null) {
-                    // Adattörlés
+                    // Adattörlés                    
                     // A tartó adatai
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                        st = co.createStatement();
-                        // A bejelölt tartók törlése
-                        parancs = "delete from tartok where id='" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    parancs = "delete from Tartok where id='" + data[0] + "'";
+                    query = session.createQuery(parancs);
+                    result = query.executeUpdate();
                     // A tartó erői
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                        st = co.createStatement();
-                        // A bejelölt tartón lévő erők törlése
-                        parancs = "delete from tartoerok where projekt = '" + megnevezes + "' and tartonev='" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    parancs = "delete from Tartoerok where projekt = '" + megnevezes + "' and tartonev='" + data[0] + "'";
+                    query = session.createQuery(parancs);
+                    result = query.executeUpdate();
                 } else {
                     // Adatmódosítás
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                        st = co.createStatement();
-                        // A megváltoztatott adatok visszaírása
-                        parancs = "update tartok set tartonev='" + data[1] + "', ";
-                        parancs = parancs + " hossz='" + data[2] + "', ";
-                        parancs = parancs + " konzol1='" + data[3] + "', ";
-                        parancs = parancs + " konzol2='" + data[4] + "', ";
-                        parancs = parancs + " szelveny='" + data[5] + "' ";
-                        parancs = parancs + " where id = '" + data[0] + "';";
-                        UpdateQuery = st.executeUpdate(parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
-                    // Ha van hozzárendelve profil, akkor ennek a hosszmérete is megváltozik
+                    // A tartó adatai
+                    parancs = "update Tartok set Tartonev='" + data[1] + "', ";
+                    parancs = parancs + " hossz='" + data[2] + "', ";
+                    parancs = parancs + " konzol1='" + data[3] + "', ";
+                    parancs = parancs + " konzol2='" + data[4] + "', ";
+                    parancs = parancs + " szelveny='" + data[5] + "' ";
+                    parancs = parancs + " where id = '" + data[0] + "'";
+                    query = session.createQuery(parancs);
+                    //System.out.println(parancs);
+                    result = query.executeUpdate();
                     teljeshossz = Float.parseFloat(String.valueOf(data[2])) + Float.parseFloat(String.valueOf(data[3])) + Float.parseFloat(String.valueOf(data[4]));
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                        st = co.createStatement();
-                        // A megváltoztatott adatok visszaírása
-                        parancs = "update tartoerok set hossz='" + teljeshossz;
-                        parancs = parancs + "' where szelveny <>'' and hely=0 and jelleg = 2 and tartonev = '";
-                        parancs = parancs + data[1] + "' and projekt = '" + projekt + "';";
-                        UpdateQuery = st.executeUpdate(parancs);
-                        //System.out.println("SQL parancs: " + parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    // Ha van hozzárendelve profil, akkor ennek a hosszmérete is megváltozik
+                    parancs = "update Tartoerok set hossz='" + teljeshossz;
+                    parancs = parancs + "' where szelveny <>'' and hely=0 and jelleg = 2 and tartonev = '";
+                    parancs = parancs + data[1] + "' and projekt = '" + projekt + "'";
+                    query = session.createQuery(parancs);
+                    result = query.executeUpdate();
+                    
                 }
             }
             // Jtable frissítése
-            j = tableModel.getRowCount();
-            for (int k = 0; k < j; k++) {
-                tableModel.removeRow(0);
-            }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                st = co.createStatement();
-                parancs = "SELECT id,tartonev,hossz,konzol1,konzol2,szelveny FROM tartok where projekt ='";
-                parancs = parancs + megnevezes + "' order by tartonev;";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(parancs);
-                while (rs.next()) {
-                    String[] data = new String[6];
-                    data[0] = String.valueOf(rs.getInt(1));
-                    data[1] = rs.getString(2);
-                    data[2] = String.valueOf(rs.getFloat(3));
-                    data[3] = String.valueOf(rs.getFloat(4));
-                    data[4] = String.valueOf(rs.getFloat(5));
-                    data[5] = rs.getString(6);
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            tartolista.setModel(tableModel);
+            session.getTransaction().commit();
+                    session.close();
+            tartolista_tablatolto();
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_TartomodositasActionPerformed
 
     private void TartobeiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TartobeiroActionPerformed
         // TODO add your handling code here:
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Tartok ujtarto = new Tartok();
+        Tartoerok ujtartoero = new Tartoerok();
         float ertek = 0f;   // Ez lesz a folyómétersúly
-        int UpdateQuery = 0;
         int tipus = 3;
-        DefaultTableModel tableModel = (DefaultTableModel) tartolista.getModel();
         if (tartonev.getText().length() > 0) {
             // Az új tartó beírása
             if (Integer.valueOf(konzol1.getText()) + Integer.valueOf(konzol2.getText()) == 0) {
@@ -493,109 +449,89 @@ public class tartok extends javax.swing.JInternalFrame {
             if (Integer.valueOf(hossz.getText()) == 0) {
                 tipus = 2;
             }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                st = co.createStatement();
-                parancs = "insert into tartok (projekt, tartonev, tipus, hossz, konzol1, konzol2, szelveny, note) values ('";
-                parancs = parancs + megnevezes + "','";
-                parancs = parancs + tartonev.getText() + "','";
-                parancs = parancs + tipus + "','";
-                parancs = parancs + hossz.getText() + "','";
-                parancs = parancs + konzol1.getText() + "','";
-                parancs = parancs + konzol2.getText() + "','";
-                parancs = parancs + szelveny.getSelectedItem().toString() + "','";
-                parancs = parancs + megjegyzes.getText() + "');";
-                //System.out.println("SQL parancs1: " + parancs); 
-                UpdateQuery = st.executeUpdate(parancs);
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
+            session.beginTransaction();
+            ujtarto.setProjekt(megnevezes);
+            ujtarto.setTartonev(tartonev.getText());
+            ujtarto.setTipus(tipus);
+            //System.out.println(":_"+hossz.getText()+"_:");
+            //System.out.println(Float.parseFloat(hossz.toString()));
+                       
+            ujtarto.setKonzol1(Float.parseFloat(konzol1.getText()));
+            ujtarto.setKonzol2(Float.parseFloat(konzol2.getText()));
+            ujtarto.setHossz(Float.parseFloat(hossz.getText())); 
+            ujtarto.setSzelveny(szelvenyek_listaja.getSelectedItem().toString());
+            ujtarto.setNote(megjegyzes.getText());
+            ujtarto.setFelvitel(now);
+            session.save(ujtarto);
+            
+            /*parancs = "insert into Tartok (projekt, tartonev, tipus, hossz, konzol1, konzol2, szelveny, note) values ('";
+            parancs = parancs + megnevezes + "','";
+            parancs = parancs + tartonev.getText() + "','";
+            parancs = parancs + tipus + "','";
+            parancs = parancs + hossz.getText() + "','";
+            parancs = parancs + konzol1.getText() + "','";
+            parancs = parancs + konzol2.getText() + "','";
+            parancs = parancs + szelveny.getSelectedItem().toString() + "','";
+            parancs = parancs + megjegyzes.getText() + "');";
+            //System.out.println("SQL parancs: " + parancs);
+            query = session.createQuery(parancs);
+            result = query.executeUpdate();*/
+            //session.getTransaction().commit();
+            //session.close();
             // A szelvény felvitele a tartóerők közé mint egy megoszló terhelést
             // Az új tartó folyómétersúlyának kikeresése
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                st = co.createStatement();
-                parancs = "SELECT (fmsuly / 10000) as folyometersuly FROM szelveny where nev ='" + szelveny.getSelectedItem().toString() + "';";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(parancs);
-                while (rs.next()) {
-                    ertek = rs.getFloat("folyometersuly");
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
+            //session.beginTransaction();
+            parancs = "FROM Szelveny where nev ='" + szelvenyek_listaja.getSelectedItem().toString() + "'";
+            //System.out.println(parancs);
+            List<Szelveny> szelvenyek = session.createQuery(parancs).list();
+            for (int i = 0; i < szelvenyek.size(); i++) {
+                ertek = szelvenyek.get(i).getFmsuly() / 10000;
             }
-            // Az új tartóerő bevitele        
+            //session.getTransaction().commit();
+            //session.close();
+            // Az új tartóerő bevitele 
             float teljeshossz = Float.parseFloat(hossz.getText()) + Float.parseFloat(konzol1.getText()) + Float.parseFloat(konzol2.getText());
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                st = co.createStatement();
-                // A megváltozott profil adatának lerögzítése megoszlóként
-                parancs = "insert into tartoerok (projekt,tartonev,szelveny,ertek,hely,hossz,jelleg) values ('";
-                parancs = parancs + projekt.getText() + "','";
-                parancs = parancs + tartonev.getText() + "','";
-                parancs = parancs + szelveny.getSelectedItem().toString() + "','";
-                parancs = parancs + ertek + "','0','";
-                parancs = parancs + teljeshossz + "','2');";
-                System.out.println("SQL parancs: " + parancs);
-                UpdateQuery = st.executeUpdate(parancs);
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
+            //session.beginTransaction();
+            ujtartoero.setProjekt(projekt.getText());
+            ujtartoero.setTartonev(tartonev.getText());
+            ujtartoero.setSzelveny(szelvenyek_listaja.getSelectedItem().toString());
+            ujtartoero.setErtek(ertek);
+            ujtartoero.setHely(0f);
+            ujtartoero.setHossz(teljeshossz);
+            ujtartoero.setJelleg(2);
+            ujtartoero.setFelvitel(now);
+            session.save(ujtartoero);            
+            /*parancs = "insert into Tartoerok (projekt,tartonev,szelveny,ertek,hely,hossz,jelleg) values ('";
+            parancs = parancs + projekt.getText() + "','";
+            parancs = parancs + tartonev.getText() + "','";
+            parancs = parancs + szelveny.getSelectedItem().toString() + "','";
+            parancs = parancs + ertek + "','0','";
+            parancs = parancs + teljeshossz + "','2');";
+            //System.out.println("SQL parancs: " + parancs);
+            query = session.createQuery(parancs);
+            result = query.executeUpdate(); */
+            session.getTransaction().commit();
+            session.close();
             // Adatfrissítés
             hossz.setText("100");
             konzol1.setText("0");
             konzol2.setText("0");
             tartonev.setText("");
             // A Jtable frissítés
-            int j = tableModel.getRowCount();
-            for (int k = 0; k < j; k++) {
-                tableModel.removeRow(0);
-            }
-            try {
-                Class.forName("com.mysql.jdbc.Driver").newInstance();
-                co = DriverManager.getConnection("jdbc:mysql://localhost/statika", "root", "");
-                st = co.createStatement();
-                parancs = "SELECT id,tartonev,hossz,konzol1,konzol2,szelveny FROM tartok where projekt ='";
-                parancs = parancs + megnevezes + "' order by id;";
-                //System.out.println("SQL: " + parancs);
-                rs = st.executeQuery(parancs);
-                while (rs.next()) {
-                    String[] data = new String[6];
-                    data[0] = String.valueOf(rs.getInt(1));
-                    data[1] = rs.getString(2);
-                    data[2] = String.valueOf(rs.getFloat(3));
-                    data[3] = String.valueOf(rs.getFloat(4));
-                    data[4] = String.valueOf(rs.getFloat(5));
-                    data[5] = rs.getString(6);
-                    tableModel.addRow(data);
-                }
-                rs.close();
-                st.close();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (ClassNotFoundException e) {
-            } catch (SQLException e) {
-            }
-            tartolista.setModel(tableModel);
+            tartolista_tablatolto();
         }
     }//GEN-LAST:event_TartobeiroActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Tartobeiro;
+    private javax.swing.JButton Tartomodositas;
     private javax.swing.JTextField hossz;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -618,7 +554,7 @@ public class tartok extends javax.swing.JInternalFrame {
     private javax.swing.JTextField konzol2;
     private javax.swing.JTextField megjegyzes;
     private javax.swing.JTextField projekt;
-    private javax.swing.JComboBox szelveny;
+    private javax.swing.JComboBox szelvenyek_listaja;
     private javax.swing.JTable tartolista;
     private javax.swing.JTextField tartonev;
     // End of variables declaration//GEN-END:variables

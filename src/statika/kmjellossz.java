@@ -4,14 +4,16 @@
  */
 package statika;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import Entities.Osszetett;
+import Entities.Szelveny;
+import Hibernate.HibernateUtil;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import java.util.Date;
 
 /**
  *
@@ -22,51 +24,40 @@ public class kmjellossz extends javax.swing.JInternalFrame {
     /**
      * Creates new form kmjellossz
      */
-    static Connection co;
-    static Statement st;
-    static ResultSet rs;
-    int UpdateQuery;
     kmjellosszadatok profil = new kmjellosszadatok();
 
-    public kmjellossz() {
+    String parancs;
+    Query query;
+    int result;
+    Date now = new Date();
 
+    public kmjellossz() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
         initComponents();
+        fok.setText("0");
+        diffx.setText("0");
+        diffy.setText("0");
         osszetett_szelvenyek.removeAllItems();
-        osszetett_szelvenyek.addItem("Válassz");
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A projekt nevének a beolvasása
-            profil.parancs = "SELECT nev FROM szelveny where megnevezes = 'Összetett szelvény' order by nev;";
-            rs = st.executeQuery(profil.parancs);
-            while (rs.next()) {
-                osszetett_szelvenyek.addItem(rs.getString(1));
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
+        session.beginTransaction();
         // A szelvények feltöltése
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
+        parancs = "FROM Szelveny order by nev";
+        //System.out.println(parancs);
+        profil.szelveny = session.createQuery(parancs).list();
+        szelvenyek_listaja.addItem("Válassz");
+        osszetett_szelvenyek.addItem("Válassz");
+        for (Szelveny szelveny : profil.szelveny) {
             // A szelvénytár beolvasása
-            rs = st.executeQuery("SELECT nev FROM szelveny where megnevezes <> 'Összetett szelvény' order by nev;");
-            while (rs.next()) {
-                szelveny.addItem(rs.getString(1));
+            if (!szelveny.getMegnevezes().equals("Összetett szelvény")) {
+                if (szelveny.getMagassag() < (profil.maxmeret / 10)) {
+                    szelvenyek_listaja.addItem(szelveny.getNev());
+                }
+            } else {
+                osszetett_szelvenyek.addItem(szelveny.getNev());
             }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
         }
+
+        session.getTransaction().commit();
+        session.close();
     }
 
     /**
@@ -87,10 +78,9 @@ public class kmjellossz extends javax.swing.JInternalFrame {
         pngrajz = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         alkotoelemek = new javax.swing.JTable();
-        jSeparator1 = new javax.swing.JSeparator();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        szelveny = new javax.swing.JComboBox();
+        szelvenyek_listaja = new javax.swing.JComboBox();
         jLabel8 = new javax.swing.JLabel();
         diffx = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
@@ -107,6 +97,7 @@ public class kmjellossz extends javax.swing.JInternalFrame {
         jSeparator2 = new javax.swing.JSeparator();
         Szelveny_modositas = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setClosable(true);
         setIconifiable(true);
@@ -215,73 +206,80 @@ public class kmjellossz extends javax.swing.JInternalFrame {
         jLabel1.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
         jLabel1.setText("Az összetett szelvény alkotóelemei:");
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/statika/exit1.png"))); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(jLabel4)
-                        .addGap(47, 47, 47)
-                        .addComponent(Ujszelveny, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Szelveny_kivalaszt, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(osszetett_szelvenyek, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(Mirrorx)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(Mirrory)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(szelveny_hozzaad, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel7)
-                                        .addComponent(jLabel8))
-                                    .addGap(21, 21, 21)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(szelveny, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(diffx, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(jLabel10)
-                                            .addGap(24, 24, 24)
-                                            .addComponent(jLabel9)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(diffy, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(jLabel11)))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(65, 65, 65)
-                                        .addComponent(forgatas, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(fok, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jLabel12))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel13)
-                                .addGap(22, 22, 22))))
-                    .addComponent(uj_osszetett, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jSeparator2)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Szelveny_modositas, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Szelveny_modositas, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(Mirrorx)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(Mirrory)
+                                .addGap(18, 18, 18)
+                                .addComponent(szelveny_hozzaad, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel12))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(szelvenyek_listaja, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(diffx, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel10)
+                                                .addGap(24, 24, 24)
+                                                .addComponent(jLabel9))
+                                            .addComponent(forgatas, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(fok, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(10, 10, 10)
+                                                .addComponent(jLabel13))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(diffy, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabel11))))))
+                            .addComponent(jLabel2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addComponent(jLabel4))
+                            .addComponent(jLabel5)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(osszetett_szelvenyek, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Szelveny_kivalaszt, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(uj_osszetett, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Ujszelveny, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pngrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -290,17 +288,17 @@ public class kmjellossz extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pngrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(7, 7, 7)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
+                            .addComponent(uj_osszetett, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(Ujszelveny))
-                        .addGap(5, 5, 5)
-                        .addComponent(uj_osszetett, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(Szelveny_kivalaszt))
+                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(osszetett_szelvenyek, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(osszetett_szelvenyek, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Szelveny_kivalaszt))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(1, 1, 1)
@@ -310,13 +308,11 @@ public class kmjellossz extends javax.swing.JInternalFrame {
                         .addGap(4, 4, 4)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(1, 1, 1)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
-                            .addComponent(szelveny, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(szelvenyek_listaja, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
@@ -340,116 +336,51 @@ public class kmjellossz extends javax.swing.JInternalFrame {
                                         .addComponent(fok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel13)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(szelveny_hozzaad)))))
-                .addContainerGap(27, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(szelveny_hozzaad)
+                                    .addComponent(jButton1))))))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void szelveny_hozzaadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_szelveny_hozzaadActionPerformed
-        // Az alszelvény hozzáadása
-        int db = 0;
-        float adat = 0;
-        String szoveg;
+    private void alkotoelemek_tablatorlo() {
         DefaultTableModel tableModel = (DefaultTableModel) alkotoelemek.getModel();
-        // Az első elem a báziselem
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A darabszám beolvasása
-            profil.parancs = "SELECT max(bazis) FROM osszetett where ossznev = '" + profil.nev + "';";
-            rs = st.executeQuery(profil.parancs);
-            while (rs.next()) {
-                db = rs.getInt(1);
-                db++;
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        // Szelvény lerögzítés
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // Az új összetett szelvény lerögzítése
-            profil.parancs = "INSERT INTO `osszetett` (`ossznev`,`nev`,`diffx`,`diffy`,`szog`,`mirrorx`,`mirrory`,`bazis`) VALUES ( '";
-            profil.parancs = profil.parancs + profil.nev + "','";
-            profil.parancs = profil.parancs + szelveny.getSelectedItem().toString() + "','";
-            if (db != 0) {
-                profil.parancs = profil.parancs + Float.parseFloat(String.valueOf(diffx.getText())) + "','";
-                profil.parancs = profil.parancs + Float.parseFloat(String.valueOf(diffy.getText())) + "','";
-            } else {
-                profil.parancs = profil.parancs + "0','";
-                profil.parancs = profil.parancs + "0','";
-            }
-            profil.parancs = profil.parancs + fok.getText() + "','";
-            adat = 0;
-            if (Mirrorx.isSelected()) {
-                adat = 1;
-            }
-            profil.parancs = profil.parancs + adat + "','";
-            adat = 0;
-            if (Mirrory.isSelected()) {
-                adat = 1;
-            }
-            profil.parancs = profil.parancs + adat + "','";
-            profil.parancs = profil.parancs + db + "');";
-            //System.out.println("SQL parancs: " + profil.parancs);
-            //rs = st.executeQuery(parancs);           
-            UpdateQuery = st.executeUpdate(profil.parancs);
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        // kirajzolás
-        profil.pngrajz();
-        //System.out.println(" forgatas:" + profil.forgatas + " mirrorx:" + profil.tukrozesx + "  mirrory:" + profil.tukrozesy);
-        szoveg = "./images/szelveny/" + profil.filenev + ".png";
-        //System.out.println(" filenevbe:" + szoveg);
-        ImageIcon icon = new ImageIcon(szoveg, "A tartorajz");
-        icon.getImage().flush();
-        pngrajz.setIcon(icon);
-        pngrajz.updateUI();
-        // A Jtable feltöltése
-        // A Jtable törlése
-        int j = tableModel.getRowCount();
-        if (j > 0) {
-            for (int k = 0; k < j; k++) {
+        int i = tableModel.getRowCount();
+        if (i > 0) {
+            for (int k = 0; k < i; k++) {
                 tableModel.removeRow(0);
             }
         }
-        // Jtable adatfeltöltése
-        for (int i = 1; i <= profil.index; i++) {
+    }
+
+    private void alkotoelemek_tablatolto() {
+        DefaultTableModel tableModel = (DefaultTableModel) alkotoelemek.getModel();
+        alkotoelemek_tablatorlo();
+        profil.adatbeolvaso();
+        for (int i = 0; i < profil.osszetett.size(); i++) {
             String[] data = new String[8];
-            data[0] = String.valueOf(profil.bazis[i]);
-            data[1] = profil.profilnev[i];
-            data[2] = String.valueOf(profil.diffx[i]);
-            data[3] = String.valueOf(profil.diffy[i]);
-            data[4] = String.valueOf(profil.forgatas[i]);
-            if (profil.problema[i] == 1) {
+            data[0] = String.valueOf(profil.osszetett.get(i).getBazis());
+            data[1] = profil.osszetett.get(i).getNev();
+            data[2] = String.valueOf(profil.osszetett.get(i).getDiffx());
+            data[3] = String.valueOf(profil.osszetett.get(i).getDiffy());
+            data[4] = String.valueOf(profil.osszetett.get(i).getSzog());
+            if (String.valueOf(profil.osszetett.get(i).getHiba()) == "H") {
                 data[7] = "Átfedés";
             } else {
                 data[7] = " ";
             }
             tableModel.addRow(data);
-            if (profil.mirrorx[i] == 1) {
-                tableModel.setValueAt(true, i - 1, 5);
+            if (profil.osszetett.get(i).getMirrorx() == 1) {
+                tableModel.setValueAt(true, i, 5);
             } else {
-                tableModel.setValueAt(false, i - 1, 5);
+                tableModel.setValueAt(false, i, 5);
             }
-            if (profil.mirrory[i] == 1) {
-                tableModel.setValueAt(true, i - 1, 6);
+            if (profil.osszetett.get(i).getMirrory() == 1) {
+                tableModel.setValueAt(true, i, 6);
             } else {
-                tableModel.setValueAt(false, i - 1, 6);
+                tableModel.setValueAt(false, i, 6);
             }
         }
         // A 2-4 -es oszlopok középre igazítása
@@ -460,10 +391,10 @@ public class kmjellossz extends javax.swing.JInternalFrame {
         alkotoelemek.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
         // A tábla oszlopszélességei
         alkotoelemek.setAutoResizeMode(alkotoelemek.AUTO_RESIZE_OFF);
-        alkotoelemek.getColumnModel().getColumn(0).setPreferredWidth(10);
+        alkotoelemek.getColumnModel().getColumn(0).setPreferredWidth(20);
         alkotoelemek.getColumnModel().getColumn(1).setPreferredWidth(105);
-        alkotoelemek.getColumnModel().getColumn(2).setPreferredWidth(35);
-        alkotoelemek.getColumnModel().getColumn(3).setPreferredWidth(35);
+        alkotoelemek.getColumnModel().getColumn(2).setPreferredWidth(40);
+        alkotoelemek.getColumnModel().getColumn(3).setPreferredWidth(40);
         alkotoelemek.getColumnModel().getColumn(4).setPreferredWidth(55);
         alkotoelemek.getColumnModel().getColumn(5).setPreferredWidth(45);
         alkotoelemek.getColumnModel().getColumn(6).setPreferredWidth(45);
@@ -471,52 +402,107 @@ public class kmjellossz extends javax.swing.JInternalFrame {
         alkotoelemek.getColumnModel().getColumn(8).setPreferredWidth(40);
         alkotoelemek.setModel(tableModel);
         alkotoelemek.setShowGrid(true);
+    }
 
+    private void szelveny_hozzaadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_szelveny_hozzaadActionPerformed
+        // Az alszelvény hozzáadása
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Osszetett ujosszetett = new Osszetett();
+        int db = 0;
+        String szoveg;
+        // Az első elem a báziselem
+        for (Osszetett osszetett : profil.osszetett) {
+            // A szelvénytár beolvasása
+            if (osszetett.getBazis() > db) {
+                db = osszetett.getBazis();
+            }
+        }
+        if (db > 0) {
+            db++;
+        }
+        profil.index++;
+        // Szelvény lerögzítés
+        session.beginTransaction();
+        ujosszetett.setOssznev(profil.nev);
+        ujosszetett.setNev(szelvenyek_listaja.getSelectedItem().toString());
+        if (db != 0) {
+            ujosszetett.setDiffx(Float.parseFloat(String.valueOf(diffx.getText())));
+            ujosszetett.setDiffy(Float.parseFloat(String.valueOf(diffy.getText())));
+        } else {
+            ujosszetett.setDiffx(0f);
+            ujosszetett.setDiffy(0f);
+        }
+
+        ujosszetett.setSzog(Integer.parseInt(fok.getText()));
+        if (Mirrorx.isSelected()) {
+            ujosszetett.setMirrorx(1);
+        } else {
+            ujosszetett.setMirrorx(0);
+        }
+        if (Mirrory.isSelected()) {
+            ujosszetett.setMirrory(1);
+        } else {
+            ujosszetett.setMirrory(0);
+        }
+        ujosszetett.setFelvitel(now);
+        ujosszetett.setBazis(db);
+        session.save(ujosszetett);
+        session.getTransaction().commit();
+        session.close();
+
+        // kirajzolás
+        profil.pngrajz();
+        //System.out.println(" forgatas:" + profil.forgatas + " mirrorx:" + profil.tukrozesx + "  mirrory:" + profil.tukrozesy);
+        szoveg = "./images/szelveny/" + profil.filenev + ".png";
+        //System.out.println(" filenevbe:" + szoveg);
+        ImageIcon icon = new ImageIcon(szoveg, "A tartorajz");
+        icon.getImage().flush();
+        pngrajz.setIcon(icon);
+        pngrajz.updateUI();
+        // A Jtable feltöltése
+        alkotoelemek_tablatolto();
     }//GEN-LAST:event_szelveny_hozzaadActionPerformed
 
     private void UjszelvenyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UjszelvenyActionPerformed
         //Az új összetett szelvény felvitele
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Szelveny ujszelveny = new Szelveny();
         DefaultTableModel tableModel = (DefaultTableModel) alkotoelemek.getModel();
         profil.nev = uj_osszetett.getText();
         profil.filenevbeiro();
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // Az új összetett szelvény lerögzítése
-            profil.parancs = "INSERT INTO `szelveny` (nev,filenev,magassag,szelesseg,v,r,r1,r2,w,w1,u,u1,u2,z,c,h1,t,tgalfa,A,ex,ey,Ix,Kx,Sx,inx,Iy,Ky,Sy,iny,fmsuly,anyag,megnevezes) VALUES('";
-            profil.parancs = profil.parancs + profil.nev + "','";
-            profil.parancs = profil.parancs + profil.filenev + "','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','','Összetett szelvény');";
-            //System.out.println("SQL parancs: " + parancs);
-            //rs = st.executeQuery(parancs);           
-            UpdateQuery = st.executeUpdate(profil.parancs);
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
-        }
-        // Az összetett szelvények újradefiniálása
-        osszetett_szelvenyek.removeAllItems();
+
+        session.beginTransaction();
+        ujszelveny.setNev(profil.nev);
+        ujszelveny.setFilenev(profil.filenev);
+        ujszelveny.setMegnevezes("Összetett szelvény");
+        ujszelveny.setFelvitel(now);
+        ujszelveny.setAnyag("Acélok");
+        ujszelveny.setMegjegyzes(" ");
+        session.save(ujszelveny);
+        /*parancs = "INSERT INTO Szelveny (nev,filenev,magassag,szelesseg,v,r,r1,r2,w,w1,u,u1,u2,z,c,h1,t,tgalfa,A,ex,ey,Ix,Kx,Sx,inx,Iy,Ky,Sy,iny,fmsuly,anyag,megnevezes) VALUES('";
+         parancs = parancs + profil.nev + "','";
+         parancs = parancs + profil.filenev + "','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','','Összetett szelvény');";
+         //System.out.println("SQL parancs: " + parancs);
+         query = session.createQuery(parancs);
+         result = query.executeUpdate();*/
+
+        // A szelvények újrafeltöltése
+        parancs = "FROM Szelveny order by nev";
+        //System.out.println(parancs);
+        profil.szelveny = session.createQuery(parancs).list();
+        szelvenyek_listaja.addItem("Válassz");
         osszetett_szelvenyek.addItem("Válassz");
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A projekt nevének a beolvasása
-            profil.parancs = "SELECT nev FROM szelveny where megnevezes = 'Összetett szelvény' order by nev;";
-            rs = st.executeQuery(profil.parancs);
-            while (rs.next()) {
-                osszetett_szelvenyek.addItem(rs.getString(1));
+        for (Szelveny szelveny : profil.szelveny) {
+            // A szelvénytár beolvasása
+            if (!szelveny.getMegnevezes().equals("Összetett szelvény")) {
+                szelvenyek_listaja.addItem(szelveny.getNev());
+            } else {
+                osszetett_szelvenyek.addItem(szelveny.getNev());
             }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
         }
+
+        session.getTransaction().commit();
+        session.close();
         uj_osszetett.setText(" ");
         // Új szelvény esetén az előző adatait törölni kell
         if (tableModel.getRowCount() > 0) {
@@ -541,10 +527,11 @@ public class kmjellossz extends javax.swing.JInternalFrame {
 
     private void Szelveny_modositasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Szelveny_modositasActionPerformed
         // TODO add your handling code here:
+        Session session = HibernateUtil.getSessionFactory().openSession();
         String szoveg;
         DefaultTableModel tableModel = (DefaultTableModel) alkotoelemek.getModel();
-        int UpdateQuery;
         if (tableModel.getRowCount() > 0) {
+            session.beginTransaction();
             // A Jtable-ben lévő adatok módosítása
             int j = tableModel.getRowCount();
             for (int k = 0; k < j; k++) {
@@ -554,6 +541,11 @@ public class kmjellossz extends javax.swing.JInternalFrame {
                 data[2] = tableModel.getValueAt(k, 2).toString();
                 data[3] = tableModel.getValueAt(k, 3).toString();
                 data[4] = tableModel.getValueAt(k, 4).toString();
+                if (k == 0) {
+                    data[2] = "0";
+                    data[3] = "0";
+                    data[4] = "0";
+                }
                 data[5] = "0";
                 if (tableModel.getValueAt(k, 5).toString().equals("true")) {
                     data[5] = "1";
@@ -563,112 +555,43 @@ public class kmjellossz extends javax.swing.JInternalFrame {
                     data[6] = "1";
                     //System.out.println("data[6]_: " + data[6]);
                 }
-                //System.out.println("data[6]: " + tableModel.getValueAt(k, 6));                
+                //System.out.println("data[6]: " + tableModel.getValueAt(k, 6));   
+
                 if (tableModel.getValueAt(k, 8) != null) {
                     // Adattörlés
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                        st = co.createStatement();
-                        // A bejelölt tartók törlése
-                        profil.parancs = "delete from osszetett where bazis='" + data[0] + "' and ";
-                        profil.parancs = profil.parancs + "ossznev = '" + profil.nev + "';";
-                        UpdateQuery = st.executeUpdate(profil.parancs);
-                        System.out.println("SQL parancs: " + profil.parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
-                    }
+                    parancs = "delete from Osszetett where bazis='" + data[0] + "' and ";
+                    parancs = profil.parancs + "ossznev = '" + profil.nev + "'";
+                    System.out.println("SQL parancs: " + parancs);
+                    query = session.createQuery(parancs);
+                    result = query.executeUpdate();
+
                 } else {
-                    // Adatmódosítás                    
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver").newInstance();
-                        co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-                        st = co.createStatement();
-                        // A megváltoztatott profil adatok visszaírása
-                        profil.parancs = "update osszetett set szog='" + data[4] + "', ";
-                        if (!data[0].equals("0")) {
-                            profil.parancs = profil.parancs + "diffx='" + data[2] + "', ";
-                            profil.parancs = profil.parancs + "diffy='" + data[3] + "', ";
-                        }
-                        if (data[5].equals("0")) {
-                            profil.parancs = profil.parancs + "mirrorx='0', ";
-                        } else {
-                            profil.parancs = profil.parancs + "mirrorx='1', ";
-                        }
-                        if (data[6].equals("0")) {
-                            profil.parancs = profil.parancs + "mirrory='0', ";
-                        } else {
-                            profil.parancs = profil.parancs + "mirrory='1', ";
-                        }
-                        profil.parancs = profil.parancs + "nev = '" + data[1] + "' ";
-                        profil.parancs = profil.parancs + "where bazis = '" + data[0] + "' and ";
-                        profil.parancs = profil.parancs + "ossznev = '" + profil.nev + "';";
-                        //System.out.println(profil.parancs);
-                        UpdateQuery = st.executeUpdate(profil.parancs);
-                        //System.out.println(profil.parancs);
-                        rs.close();
-                        st.close();
-                    } catch (InstantiationException e) {
-                    } catch (IllegalAccessException e) {
-                    } catch (ClassNotFoundException e) {
-                    } catch (SQLException e) {
+                    // Adatmódosítás                   
+                    // A tartó adatai
+                    parancs = "update Osszetett set szog='" + data[4] + "', ";
+                    if (!data[0].equals("0")) {
+                        parancs = parancs + "diffx='" + data[2] + "', ";
+                        parancs = parancs + "diffy='" + data[3] + "', ";
                     }
+                    if (data[5].equals("0")) {
+                        parancs = parancs + "mirrorx='0', ";
+                    } else {
+                        parancs = parancs + "mirrorx='1', ";
+                    }
+                    if (data[6].equals("0")) {
+                        parancs = parancs + "mirrory='0', ";
+                    } else {
+                        parancs = parancs + "mirrory='1', ";
+                    }
+                    parancs = parancs + "nev = '" + data[1] + "' ";
+                    parancs = parancs + "where bazis = '" + data[0] + "' and ";
+                    parancs = parancs + "ossznev = '" + profil.nev + "'";
+                    query = session.createQuery(parancs);
+                    result = query.executeUpdate();
                 }
             }
             // Jtable frissítése
-            j = tableModel.getRowCount();
-            for (int k = 0; k < j; k++) {
-                tableModel.removeRow(0);
-            }
-            profil.adatbeolvaso();
-            // Jtable adatfeltöltése
-            for (int i = 1; i <= profil.index; i++) {
-                String[] data = new String[8];
-                data[0] = String.valueOf(profil.bazis[i]);
-                data[1] = profil.profilnev[i];
-                data[2] = String.valueOf(profil.diffx[i]);
-                data[3] = String.valueOf(profil.diffy[i]);
-                data[4] = String.valueOf(profil.forgatas[i]);
-                if (profil.problema[i] == 1) {
-                    data[7] = "Átfedés";
-                } else {
-                    data[7] = " ";
-                }
-                tableModel.addRow(data);
-                if (profil.mirrorx[i] == 1) {
-                    tableModel.setValueAt(true, i - 1, 5);
-                } else {
-                    tableModel.setValueAt(false, i - 1, 5);
-                }
-                if (profil.mirrory[i] == 1) {
-                    tableModel.setValueAt(true, i - 1, 6);
-                } else {
-                    tableModel.setValueAt(false, i - 1, 6);
-                }
-            }
-            // A 2-4 -es oszlopok középre igazítása
-            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-            centerRenderer.setHorizontalAlignment(uj_osszetett.CENTER);
-            alkotoelemek.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-            alkotoelemek.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-            alkotoelemek.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-            // A tábla oszlopszélességei
-            alkotoelemek.setAutoResizeMode(alkotoelemek.AUTO_RESIZE_OFF);
-            alkotoelemek.getColumnModel().getColumn(0).setPreferredWidth(10);
-            alkotoelemek.getColumnModel().getColumn(1).setPreferredWidth(105);
-            alkotoelemek.getColumnModel().getColumn(2).setPreferredWidth(35);
-            alkotoelemek.getColumnModel().getColumn(3).setPreferredWidth(35);
-            alkotoelemek.getColumnModel().getColumn(4).setPreferredWidth(55);
-            alkotoelemek.getColumnModel().getColumn(5).setPreferredWidth(45);
-            alkotoelemek.getColumnModel().getColumn(6).setPreferredWidth(45);
-            alkotoelemek.getColumnModel().getColumn(7).setPreferredWidth(45);
-            alkotoelemek.getColumnModel().getColumn(8).setPreferredWidth(40);
-            alkotoelemek.setModel(tableModel);
-            alkotoelemek.setShowGrid(true);
+            alkotoelemek_tablatolto();
             // Rajzolás
             profil.pngrajz();
             szoveg = "./images/szelveny/" + profil.filenev + ".png";
@@ -677,54 +600,37 @@ public class kmjellossz extends javax.swing.JInternalFrame {
             icon.getImage().flush();
             pngrajz.setIcon(icon);
             pngrajz.updateUI();
+            session.getTransaction().commit();
+            session.close();
         }
     }//GEN-LAST:event_Szelveny_modositasActionPerformed
 
     private void Szelveny_kivalasztActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Szelveny_kivalasztActionPerformed
         // TODO add your handling code here:
-        int db = 0;
+        Session session = HibernateUtil.getSessionFactory().openSession();
         String szoveg;
-        DefaultTableModel tableModel = (DefaultTableModel) alkotoelemek.getModel();
-
+        profil.index = 0;
         profil.nev = osszetett_szelvenyek.getSelectedItem().toString();
         //profil.filenevbeiro();
         // Ha van hozzárendelve szelvény, akkor Jtable + rajzolás
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A darabszám beolvasása
-            profil.parancs = "SELECT count(nev) FROM osszetett where ossznev = '" + profil.nev + "';";
-            rs = st.executeQuery(profil.parancs);
-            while (rs.next()) {
-                db = rs.getInt(1);
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+        session.beginTransaction();
+        parancs = "FROM Osszetett where ossznev = '" + profil.nev + "'";
+        //System.out.println(parancs);
+        List<Osszetett> osszetett = session.createQuery(parancs).list();
+        for (Osszetett osszetett1 : osszetett) {
+            profil.index++;
         }
         // A filenév beolvasása
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
-            // A darabszám beolvasása
-            profil.parancs = "SELECT filenev FROM szelveny where nev = '" + profil.nev + "';";
-            rs = st.executeQuery(profil.parancs);
-            while (rs.next()) {
-                profil.filenev = rs.getString("filenev");
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+        parancs = "FROM Szelveny where nev = '" + profil.nev + "'";
+        //System.out.println(parancs);
+        List<Szelveny> szelveny = session.createQuery(parancs).list();
+        for (Szelveny szelveny1 : szelveny) {
+            profil.filenev = szelveny1.getFilenev();
         }
-        if (db != 0) {
+        session.getTransaction().commit();
+        session.close();
+
+        if (profil.index != 0) {
             // Rajzolás
             profil.pngrajz();
             //System.out.println(" forgatas:" + profil.forgatas + " mirrorx:" + profil.tukrozesx + "  mirrory:" + profil.tukrozesy);
@@ -734,61 +640,17 @@ public class kmjellossz extends javax.swing.JInternalFrame {
             icon.getImage().flush();
             pngrajz.setIcon(icon);
             pngrajz.updateUI();
-            // Jtable
-            // A Jtable törlése
-            int j = tableModel.getRowCount();
-            if (j > 0) {
-                for (int k = 0; k < j; k++) {
-                    tableModel.removeRow(0);
-                }
-            }
-            // Jtable adatfeltöltése
-            for (int i = 1; i <= profil.index; i++) {
-                String[] data = new String[8];
-                data[0] = String.valueOf(profil.bazis[i]);
-                data[1] = profil.profilnev[i];
-                data[2] = String.valueOf(profil.diffx[i]);
-                data[3] = String.valueOf(profil.diffy[i]);
-                data[4] = String.valueOf(profil.forgatas[i]);
-                if (profil.problema[i] == 1) {
-                    data[7] = "Átfedés";
-                } else {
-                    data[7] = " ";
-                }
-                tableModel.addRow(data);
-                if (profil.mirrorx[i] == 1) {
-                    tableModel.setValueAt(true, i - 1, 5);
-                } else {
-                    tableModel.setValueAt(false, i - 1, 5);
-                }
-                if (profil.mirrory[i] == 1) {
-                    tableModel.setValueAt(true, i - 1, 6);
-                } else {
-                    tableModel.setValueAt(false, i - 1, 6);
-                }
-            }
-            // A 2-4 -es oszlopok középre igazítása
-            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-            centerRenderer.setHorizontalAlignment(uj_osszetett.CENTER);
-            alkotoelemek.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-            alkotoelemek.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-            alkotoelemek.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-            // A tábla oszlopszélességei
-            alkotoelemek.setAutoResizeMode(alkotoelemek.AUTO_RESIZE_OFF);
-            alkotoelemek.getColumnModel().getColumn(0).setPreferredWidth(10);
-            alkotoelemek.getColumnModel().getColumn(1).setPreferredWidth(105);
-            alkotoelemek.getColumnModel().getColumn(2).setPreferredWidth(35);
-            alkotoelemek.getColumnModel().getColumn(3).setPreferredWidth(35);
-            alkotoelemek.getColumnModel().getColumn(4).setPreferredWidth(55);
-            alkotoelemek.getColumnModel().getColumn(5).setPreferredWidth(45);
-            alkotoelemek.getColumnModel().getColumn(6).setPreferredWidth(45);
-            alkotoelemek.getColumnModel().getColumn(7).setPreferredWidth(45);
-            alkotoelemek.getColumnModel().getColumn(8).setPreferredWidth(40);
-            alkotoelemek.setModel(tableModel);
-            alkotoelemek.setShowGrid(true);
+            // Jtable adatfeltöltes
+            alkotoelemek_tablatolto();
 
         }
     }//GEN-LAST:event_Szelveny_kivalasztActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton Mirrorx;
     private javax.swing.JRadioButton Mirrory;
@@ -800,6 +662,7 @@ public class kmjellossz extends javax.swing.JInternalFrame {
     private javax.swing.JTextField diffy;
     private javax.swing.JTextField fok;
     private javax.swing.JSlider forgatas;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -812,12 +675,11 @@ public class kmjellossz extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JComboBox osszetett_szelvenyek;
     private javax.swing.JLabel pngrajz;
-    private javax.swing.JComboBox szelveny;
     private javax.swing.JButton szelveny_hozzaad;
+    private javax.swing.JComboBox szelvenyek_listaja;
     private javax.swing.JTextField uj_osszetett;
     // End of variables declaration//GEN-END:variables
 }

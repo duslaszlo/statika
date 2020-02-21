@@ -16,7 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 import java.awt.event.*;
 import java.awt.*;
-
 /*
  * InternalFrameDemo.java requires:
  *   MyInternalFrame.java

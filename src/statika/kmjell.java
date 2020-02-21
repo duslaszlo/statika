@@ -4,8 +4,10 @@
  */
 package statika;
 
-import java.sql.*;
+import Hibernate.HibernateUtil;
+import java.util.List;
 import javax.swing.ImageIcon;
+import org.hibernate.Session;
 
 /**
  *
@@ -17,30 +19,33 @@ public class kmjell extends javax.swing.JInternalFrame {
      * Creates new form kmjell
      */
     // A változók deklarálása
-    static Connection co;
-    static Statement st;
-    static ResultSet rs;
     kmadatok profil = new kmadatok();
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    String parancs;
 
     public kmjell() {
         initComponents();
         // A szelvények feltöltése
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            co = DriverManager.getConnection(Global.mysql_server, Global.mysql_user, Global.mysql_password);
-            st = co.createStatement();
+        session.beginTransaction();
+        parancs = "select distinct megnevezes FROM Szelveny where megnevezes <> 'Összetett szelvény' order by megnevezes";
+        //System.out.println(parancs);
+        profil_csoport.removeAll();
+        List<String> profillista = session.createQuery(parancs).list();
+        for (int i = 0; i < profillista.size(); i++) {
             // A szelvénytár beolvasása
-            rs = st.executeQuery("SELECT nev FROM szelveny where megnevezes <> 'Összetett szelvény' order by nev ");
-            while (rs.next()) {
-                szelveny.addItem(rs.getString(1));
-            }
-            rs.close();
-            st.close();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (SQLException e) {
+            profil_csoport.addItem(profillista.get(i));
         }
+        szelvenyek_listaja.removeAll();
+        parancs = "Select nev FROM Szelveny where megnevezes = '" + profillista.get(0) + "' order by nev";
+        //System.out.println(parancs);
+        profil.szelvenylista = session.createQuery(parancs).list();
+        //szelvenyek_listaja.addItem("Válassz");
+        for (int i = 0; i < profil.szelvenylista.size(); i++) {
+            // A szelvénytár beolvasása
+            szelvenyek_listaja.addItem(profil.szelvenylista.get(i));
+        }
+        session.getTransaction().commit();
+        session.close();
     }
 
     /**
@@ -52,11 +57,14 @@ public class kmjell extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        szelveny = new javax.swing.JComboBox();
+        szelvenyek_listaja = new javax.swing.JComboBox();
         kivalaszto = new javax.swing.JButton();
         pngrajz = new javax.swing.JLabel();
         kmjellemzok = new javax.swing.JButton();
         pngkep = new javax.swing.JButton();
+        profil_csoport = new javax.swing.JComboBox();
+        profil_csoport_kivalaszto = new javax.swing.JButton();
+        Kilepes = new javax.swing.JButton();
 
         setClosable(true);
         setIconifiable(true);
@@ -91,39 +99,63 @@ public class kmjell extends javax.swing.JInternalFrame {
             }
         });
 
+        profil_csoport_kivalaszto.setText("Profil-csoport");
+        profil_csoport_kivalaszto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                profil_csoport_kivalasztoActionPerformed(evt);
+            }
+        });
+
+        Kilepes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/statika/exit1.png"))); // NOI18N
+        Kilepes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                KilepesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pngrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(pngrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(szelveny, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(szelvenyek_listaja, 0, 283, Short.MAX_VALUE)
+                            .addComponent(profil_csoport, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(profil_csoport_kivalaszto, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                            .addComponent(kivalaszto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(kivalaszto, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15)
-                        .addComponent(pngkep, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(kmjellemzok, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(kmjellemzok, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pngkep, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Kilepes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(szelveny, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(kivalaszto)
-                        .addComponent(pngkep))
-                    .addComponent(kmjellemzok, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(pngkep)
+                            .addComponent(profil_csoport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(profil_csoport_kivalaszto))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(szelvenyek_listaja, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(kivalaszto)
+                            .addComponent(kmjellemzok)))
+                    .addComponent(Kilepes, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(pngrajz, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -131,7 +163,7 @@ public class kmjell extends javax.swing.JInternalFrame {
 
     private void kepkitevo() {
         //String szoveg;
-        profil.pngrajz(profil.nagyitas);
+        profil.pngrajz();
         // A PNG rajz visszaillesztése
         //szoveg = "./images/szelveny/" + profil.filenev + ".png";
         //System.out.println(" filenevbe:" + szoveg);
@@ -144,13 +176,12 @@ public class kmjell extends javax.swing.JInternalFrame {
     private void kivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kivalasztoActionPerformed
         // TODO add your handling code here:        
         Float meret;
-        profil.nev = szelveny.getSelectedItem().toString();
+        profil.nev = szelvenyek_listaja.getSelectedItem().toString();
         profil.beolvas();
-        meret = Float.parseFloat(String.valueOf(Math.sqrt(Double.parseDouble(String.valueOf((profil.magassag / 2) * (profil.magassag / 2) + (profil.szelesseg / 2) * (profil.szelesseg / 2))))));
+        meret = Float.parseFloat(String.valueOf(Math.sqrt(Double.parseDouble(String.valueOf((profil.profil.get(0).getMagassag() / 2) * (profil.profil.get(0).getMagassag() / 2) + (profil.profil.get(0).getSzelesseg() / 2) * (profil.profil.get(0).getSzelesseg() / 2))))));
         meret *= 2;
         profil.nagyitas = 480 / meret;
         kepkitevo();
-        profil.szog = 0;
     }//GEN-LAST:event_kivalasztoActionPerformed
 
     private void kmjellemzokActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kmjellemzokActionPerformed
@@ -168,38 +199,74 @@ public class kmjell extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         //System.out.println("X:"+evt.getX()+"  Y:"+evt.getY());
         profil.kmkijelzes = false;
-        if ((profil.mx==0) || (profil.my==0)) {
-            profil.mx = evt.getX();profil.my = evt.getY();
+        if ((profil.mx == 0) || (profil.my == 0)) {
+            profil.mx = evt.getX();
+            profil.my = evt.getY();
         } else {
             if (evt.getX() < profil.mx) {
                 profil.forgatas++;
-                if (profil.forgatas > 360) {profil.forgatas=0;}
+                if (profil.forgatas > 360) {
+                    profil.forgatas = 0;
+                }
                 profil.mx = evt.getX();
             }
             if (evt.getX() > profil.mx) {
-                 profil.forgatas--;
-                if (profil.forgatas < 0) {profil.forgatas=360;}
+                profil.forgatas--;
+                if (profil.forgatas < 0) {
+                    profil.forgatas = 360;
+                }
                 profil.mx = evt.getX();
             }
             if (evt.getY() < profil.my) {
                 profil.forgatas++;
-                if (profil.forgatas > 360) {profil.forgatas=0;}
+                if (profil.forgatas > 360) {
+                    profil.forgatas = 0;
+                }
                 profil.my = evt.getY();
             }
             if (evt.getY() > profil.my) {
-                 profil.forgatas--;
-                if (profil.forgatas < 0) {profil.forgatas=360;}
+                profil.forgatas--;
+                if (profil.forgatas < 0) {
+                    profil.forgatas = 360;
+                }
                 profil.my = evt.getY();
             }
             kepkitevo();
         }
     }//GEN-LAST:event_pngrajzMouseDragged
 
+    private void profil_csoport_kivalasztoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profil_csoport_kivalasztoActionPerformed
+        // TODO add your handling code here:
+        profil.szelvenylista.clear();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        parancs = "Select nev FROM Szelveny where megnevezes = '" + profil_csoport.getSelectedItem() + "' order by nev";
+        //System.out.println(parancs);
+        profil.szelvenylista = session.createQuery(parancs).list();
+        szelvenyek_listaja.removeAllItems();
+        //szelvenyek_listaja.addItem("Válassz");
+        for (int i = 0; i < profil.szelvenylista.size(); i++) {
+            // A szelvénytár beolvasása
+            //System.out.println(profil.szelvenylista.get(i));
+            szelvenyek_listaja.addItem(profil.szelvenylista.get(i));
+        }
+        session.getTransaction().commit();
+        session.close();
+    }//GEN-LAST:event_profil_csoport_kivalasztoActionPerformed
+
+    private void KilepesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KilepesActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_KilepesActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Kilepes;
     private javax.swing.JButton kivalaszto;
     private javax.swing.JButton kmjellemzok;
     private javax.swing.JButton pngkep;
     private javax.swing.JLabel pngrajz;
-    private javax.swing.JComboBox szelveny;
+    private javax.swing.JComboBox profil_csoport;
+    private javax.swing.JButton profil_csoport_kivalaszto;
+    private javax.swing.JComboBox szelvenyek_listaja;
     // End of variables declaration//GEN-END:variables
 }
